@@ -1,0 +1,26 @@
+.project
+.classpath
+*.iml
+.idea/*
+target/*
+.settings/*
+**/.settings
+**/.idea/*
+**/target/*
+*.log*
+**/.vscode/*
+.vscode/*
+*bin/*
+*.class
+**/.gradle/*
+**/gradlew
+gradlew.bat
+**/bin/*
+**/build/*
+**/gradle/*
+.factorypath
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
