@@ -19,6 +19,7 @@ gradlew.bat
 **/build/*
 **/gradle/*
 .factorypath
+.gitignore
 # Ignore Gradle project-specific cache directory
 .gradle
 
