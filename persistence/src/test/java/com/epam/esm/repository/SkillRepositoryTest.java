@@ -24,8 +24,6 @@ public class SkillRepositoryTest {
 
     @Autowired
     private SkillRepository skillRepository;
-    @Autowired
-    private VacancyRepository vacancyRepository;
 
     @Test
     public void shouldFindSkillByPartOfNameDesc() {

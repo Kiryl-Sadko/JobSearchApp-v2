@@ -22,6 +22,5 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
                     "job_application.user_id order by sum(job_application.salary) \n" +
                     "desc limit 1) group by skill.name\n" +
                     "order by qty desc limit 1")
-
     Optional<Skill> findTheMostWidelyUsedSkillWithHighestSalary();
 }
