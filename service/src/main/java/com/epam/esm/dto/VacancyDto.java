@@ -12,7 +12,7 @@ public class VacancyDto extends Dto<VacancyDto> {
     private String placementDate;
     private BigDecimal salary;
     private String location;
-    private List<SkillDto> skills;
+    private List<SkillDto> skillDtoList;
     private List<JobApplicationDto> applicationDtoList;
 
     public VacancyDto() {
@@ -27,7 +27,7 @@ public class VacancyDto extends Dto<VacancyDto> {
                 ", placementDate='" + placementDate + '\'' +
                 ", salary=" + salary +
                 ", location='" + location + '\'' +
-                ", skills=" + skills +
+                ", skills=" + skillDtoList +
                 ", applicationDtoList=" + applicationDtoList +
                 '}';
     }
@@ -38,12 +38,12 @@ public class VacancyDto extends Dto<VacancyDto> {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         VacancyDto that = (VacancyDto) o;
-        return Objects.equals(id, that.id) && Objects.equals(position, that.position) && Objects.equals(employer, that.employer) && Objects.equals(placementDate, that.placementDate) && Objects.equals(salary, that.salary) && Objects.equals(location, that.location) && Objects.equals(skills, that.skills) && Objects.equals(applicationDtoList, that.applicationDtoList);
+        return Objects.equals(id, that.id) && Objects.equals(position, that.position) && Objects.equals(employer, that.employer) && Objects.equals(placementDate, that.placementDate) && Objects.equals(salary, that.salary) && Objects.equals(location, that.location) && Objects.equals(skillDtoList, that.skillDtoList) && Objects.equals(applicationDtoList, that.applicationDtoList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, position, employer, placementDate, salary, location, skills, applicationDtoList);
+        return Objects.hash(super.hashCode(), id, position, employer, placementDate, salary, location, skillDtoList, applicationDtoList);
     }
 
     public Long getId() {
@@ -94,12 +94,12 @@ public class VacancyDto extends Dto<VacancyDto> {
         this.location = location;
     }
 
-    public List<SkillDto> getSkills() {
-        return skills;
+    public List<SkillDto> getSkillDtoList() {
+        return skillDtoList;
     }
 
-    public void setSkills(List<SkillDto> skills) {
-        this.skills = skills;
+    public void setSkillDtoList(List<SkillDto> skillDtoList) {
+        this.skillDtoList = skillDtoList;
     }
 
     public List<JobApplicationDto> getApplicationDtoList() {
