@@ -1,11 +1,9 @@
 package com.epam.esm.dto;
 
-import org.springframework.hateoas.RepresentationModel;
-
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class JobApplicationDto extends RepresentationModel<JobApplicationDto> {
+public class JobApplicationDto extends Dto<JobApplicationDto> {
 
     private Long id;
     private UserDto userDto;

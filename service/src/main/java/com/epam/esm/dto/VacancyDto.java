@@ -1,12 +1,10 @@
 package com.epam.esm.dto;
 
-import org.springframework.hateoas.RepresentationModel;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
-public class VacancyDto extends RepresentationModel<VacancyDto> {
+public class VacancyDto extends Dto<VacancyDto> {
 
     private Long id;
     private String position;

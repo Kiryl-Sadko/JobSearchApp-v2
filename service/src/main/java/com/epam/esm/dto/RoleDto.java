@@ -1,11 +1,9 @@
 package com.epam.esm.dto;
 
-import org.springframework.hateoas.RepresentationModel;
-
 import java.util.List;
 import java.util.Objects;
 
-public class RoleDto extends RepresentationModel<RoleDto> {
+public class RoleDto extends Dto<RoleDto> {
 
     private Long id;
     private String name;
