@@ -41,7 +41,7 @@ public class User implements Serializable {
     private List<Role> roles;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<JobApplication> applications;
+    private List<JobApplication> jobApplications;
 
     public User() {
     }
@@ -53,7 +53,7 @@ public class User implements Serializable {
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
                 ", roles=" + roles +
-                ", applications=" + applications +
+                ", applications=" + jobApplications +
                 '}';
     }
 
@@ -62,12 +62,12 @@ public class User implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles) && Objects.equals(applications, user.applications);
+        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles) && Objects.equals(jobApplications, user.jobApplications);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, password, roles, applications);
+        return Objects.hash(id, name, password, roles, jobApplications);
     }
 
     public Long getId() {
@@ -102,11 +102,11 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
-    public List<JobApplication> getApplications() {
-        return applications;
+    public List<JobApplication> getJobApplications() {
+        return jobApplications;
     }
 
-    public void setApplications(List<JobApplication> applications) {
-        this.applications = applications;
+    public void setJobApplications(List<JobApplication> jobApplications) {
+        this.jobApplications = jobApplications;
     }
 }

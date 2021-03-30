@@ -11,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
+import java.util.List;
+
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.*;
 
 @SpringBootTest(classes = PersistenceConfig.class)
@@ -24,14 +26,21 @@ public class JobApplicationRepositoryTest {
     private JobApplicationRepository jobApplicationRepository;
 
     @Test
-    public void shouldFindAllApplications() {
+    public void shouldFindAllJobApplications() {
         Page<JobApplication> all = jobApplicationRepository.findAll(PageRequest.of(0, 5));
         Assertions.assertEquals(4, all.getContent().size());
     }
 
     @Test
-    public void shouldFindApplicationById() {
+    public void shouldFindJobApplicationById() {
         JobApplication jobApplication = jobApplicationRepository.findById(1L).orElseThrow();
         Assertions.assertEquals(1L, jobApplication.getVacancy().getId());
+    }
+
+    @Test
+    public void shouldFindJobApplicationsByUserId() {
+        Page<JobApplication> byUserId = jobApplicationRepository.findByUserId(1L, PageRequest.of(0, 5));
+        List<JobApplication> applicationList = byUserId.getContent();
+        Assertions.assertEquals(4, applicationList.size());
     }
 }
