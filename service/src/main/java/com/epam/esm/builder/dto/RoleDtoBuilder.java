@@ -5,7 +5,7 @@ import com.epam.esm.dto.UserDto;
 
 import java.util.List;
 
-public interface RoleDtoBuilder extends DtoBuilder<RoleDto, RoleDtoBuilder>{
+public interface RoleDtoBuilder extends DtoBuilder<RoleDto, RoleDtoBuilder> {
 
     RoleDtoBuilder setName(String name);
 

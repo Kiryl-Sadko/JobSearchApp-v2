@@ -9,6 +9,9 @@ public class RoleDto extends Dto<RoleDto> {
     private String name;
     private List<UserDto> userDtoList;
 
+    public RoleDto() {
+    }
+
     @Override
     public String toString() {
         return "RoleDto{" +
@@ -54,8 +57,5 @@ public class RoleDto extends Dto<RoleDto> {
 
     public void setUserDtoList(List<UserDto> userDtoList) {
         this.userDtoList = userDtoList;
-    }
-
-    public RoleDto() {
     }
 }
