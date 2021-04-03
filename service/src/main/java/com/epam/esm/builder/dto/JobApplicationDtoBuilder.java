@@ -5,7 +5,6 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.VacancyDto;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
 
 public interface JobApplicationDtoBuilder extends DtoBuilder<JobApplicationDto, JobApplicationDtoBuilder> {
 
@@ -13,7 +12,7 @@ public interface JobApplicationDtoBuilder extends DtoBuilder<JobApplicationDto, 
 
     JobApplicationDtoBuilder setVacancyDto(VacancyDto vacancyDto);
 
-    JobApplicationDtoBuilder setResponseDate(Calendar responseDate);
+    JobApplicationDtoBuilder setResponseDate(String responseDate);
 
     JobApplicationDtoBuilder setSalary(BigDecimal salary);
 }

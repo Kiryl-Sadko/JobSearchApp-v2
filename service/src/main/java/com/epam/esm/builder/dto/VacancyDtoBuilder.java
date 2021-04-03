@@ -5,14 +5,13 @@ import com.epam.esm.dto.SkillDto;
 import com.epam.esm.dto.VacancyDto;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.List;
 
 public interface VacancyDtoBuilder extends DtoBuilder<VacancyDto, VacancyDtoBuilder> {
 
     VacancyDtoBuilder setPosition(String position);
 
-    VacancyDtoBuilder setPlacementDate(Calendar placementDate);
+    VacancyDtoBuilder setPlacementDate(String placementDate);
 
     VacancyDtoBuilder setLocation(String location);
 
