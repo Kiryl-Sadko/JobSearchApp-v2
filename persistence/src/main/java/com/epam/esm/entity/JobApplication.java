@@ -2,7 +2,6 @@ package com.epam.esm.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,19 +15,19 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Objects;
 
-@Entity
+@javax.persistence.Entity
 @Table(name = "job_application")
-public class JobApplication implements Serializable {
+public class JobApplication implements Entity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "vacancy_id")
     private Vacancy vacancy;
 

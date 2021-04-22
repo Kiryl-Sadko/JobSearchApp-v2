@@ -2,7 +2,6 @@ package com.epam.esm.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,9 +16,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
+@javax.persistence.Entity
 @Table(name = "user")
-public class User implements Serializable {
+public class User implements Entity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,8 +51,6 @@ public class User implements Serializable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
-                ", roles=" + roles +
-                ", applications=" + jobApplications +
                 '}';
     }
 

@@ -1,7 +1,6 @@
 package com.epam.esm.entity;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,9 +11,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
+@javax.persistence.Entity
 @Table(name = "skill")
-public class Skill implements Serializable {
+public class Skill implements Entity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
