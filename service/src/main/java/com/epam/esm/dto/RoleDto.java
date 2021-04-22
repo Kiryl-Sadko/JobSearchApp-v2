@@ -1,13 +1,19 @@
 package com.epam.esm.dto;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class RoleDto extends Dto<RoleDto> {
 
+    @NotNull
     private Long id;
+    @Size(min = 4, max = 10)
     private String name;
-    private List<UserDto> userDtoList;
+    @NotNull
+    private List<Long> userIdList = new ArrayList<>();
 
     public RoleDto() {
     }
@@ -17,7 +23,7 @@ public class RoleDto extends Dto<RoleDto> {
         return "RoleDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", userDtoList=" + userDtoList +
+                ", userId=" + userIdList +
                 '}';
     }
 
@@ -27,12 +33,12 @@ public class RoleDto extends Dto<RoleDto> {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         RoleDto roleDto = (RoleDto) o;
-        return Objects.equals(id, roleDto.id) && Objects.equals(name, roleDto.name) && Objects.equals(userDtoList, roleDto.userDtoList);
+        return Objects.equals(id, roleDto.id) && Objects.equals(name, roleDto.name) && Objects.equals(userIdList, roleDto.userIdList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, name, userDtoList);
+        return Objects.hash(super.hashCode(), id, name, userIdList);
     }
 
     public Long getId() {
@@ -51,11 +57,11 @@ public class RoleDto extends Dto<RoleDto> {
         this.name = name;
     }
 
-    public List<UserDto> getUserDtoList() {
-        return userDtoList;
+    public List<Long> getUserIdList() {
+        return userIdList;
     }
 
-    public void setUserDtoList(List<UserDto> userDtoList) {
-        this.userDtoList = userDtoList;
+    public void setUserIdList(List<Long> userIdList) {
+        this.userIdList = userIdList;
     }
 }

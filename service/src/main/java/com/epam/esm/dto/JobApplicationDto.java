@@ -1,14 +1,21 @@
 package com.epam.esm.dto;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Objects;
 
 public class JobApplicationDto extends Dto<JobApplicationDto> {
 
+    @NotNull
     private Long id;
+    @NotNull
     private UserDto userDto;
+    @NotNull
     private VacancyDto vacancyDto;
+    @NotNull
     private String responseDate;
+    @Min(value = 0)
     private BigDecimal salary;
 
     public JobApplicationDto() {

@@ -1,13 +1,19 @@
 package com.epam.esm.dto;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class SkillDto extends Dto<SkillDto> {
 
+    @NotNull
     private Long id;
+    @Size(min = 4, max = 10)
     private String name;
-    private List<VacancyDto> vacancyDtoList;
+    @NotNull
+    private List<Long> vacancyIdList = new ArrayList<>();
 
     public SkillDto() {
     }
@@ -17,7 +23,7 @@ public class SkillDto extends Dto<SkillDto> {
         return "SkillDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", vacancyDtoList=" + vacancyDtoList +
+                ", vacancyIdList=" + vacancyIdList +
                 '}';
     }
 
@@ -27,12 +33,14 @@ public class SkillDto extends Dto<SkillDto> {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         SkillDto skillDto = (SkillDto) o;
-        return Objects.equals(id, skillDto.id) && Objects.equals(name, skillDto.name) && Objects.equals(vacancyDtoList, skillDto.vacancyDtoList);
+        return Objects.equals(id, skillDto.id)
+                && Objects.equals(name, skillDto.name)
+                && Objects.equals(vacancyIdList, skillDto.vacancyIdList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, name, vacancyDtoList);
+        return Objects.hash(super.hashCode(), id, name, vacancyIdList);
     }
 
     public Long getId() {
@@ -51,11 +59,11 @@ public class SkillDto extends Dto<SkillDto> {
         this.name = name;
     }
 
-    public List<VacancyDto> getVacancyDtoList() {
-        return vacancyDtoList;
+    public List<Long> getVacancyIdList() {
+        return vacancyIdList;
     }
 
-    public void setVacancyDtoList(List<VacancyDto> vacancyDtoList) {
-        this.vacancyDtoList = vacancyDtoList;
+    public void setVacancyIdList(List<Long> vacancyIdList) {
+        this.vacancyIdList = vacancyIdList;
     }
 }
