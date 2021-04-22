@@ -3,9 +3,11 @@ package com.epam.esm.builder.entity.impl;
 import com.epam.esm.builder.entity.SkillBuilder;
 import com.epam.esm.entity.Skill;
 import com.epam.esm.entity.Vacancy;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class SkillBuilderImpl implements SkillBuilder {
 
     private Skill skill = new Skill();

@@ -4,9 +4,11 @@ import com.epam.esm.builder.entity.UserBuilder;
 import com.epam.esm.entity.JobApplication;
 import com.epam.esm.entity.Role;
 import com.epam.esm.entity.User;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class UserBuilderImpl implements UserBuilder {
 
     private User user = new User();

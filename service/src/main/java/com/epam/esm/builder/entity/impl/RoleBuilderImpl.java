@@ -3,9 +3,11 @@ package com.epam.esm.builder.entity.impl;
 import com.epam.esm.builder.entity.RoleBuilder;
 import com.epam.esm.entity.Role;
 import com.epam.esm.entity.User;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class RoleBuilderImpl implements RoleBuilder {
 
     private Role role = new Role();

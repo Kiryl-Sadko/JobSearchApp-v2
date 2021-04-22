@@ -4,10 +4,12 @@ import com.epam.esm.builder.entity.JobApplicationBuilder;
 import com.epam.esm.entity.JobApplication;
 import com.epam.esm.entity.User;
 import com.epam.esm.entity.Vacancy;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
 
+@Component
 public class JobApplicationBuilderImpl implements JobApplicationBuilder {
 
     private JobApplication jobApplication = new JobApplication();

@@ -2,10 +2,11 @@ package com.epam.esm.builder.dto.impl;
 
 import com.epam.esm.builder.dto.SkillDtoBuilder;
 import com.epam.esm.dto.SkillDto;
-import com.epam.esm.dto.VacancyDto;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class SkillDtoBuilderImpl implements SkillDtoBuilder {
 
     private SkillDto skillDto = new SkillDto();
@@ -15,7 +16,7 @@ public class SkillDtoBuilderImpl implements SkillDtoBuilder {
         SkillDto result = new SkillDto();
         result.setId(skillDto.getId());
         result.setName(skillDto.getName());
-        result.setVacancyDtoList(skillDto.getVacancyDtoList());
+        result.setVacancyIdList(skillDto.getVacancyIdList());
         this.reset();
         return result;
     }
@@ -39,8 +40,8 @@ public class SkillDtoBuilderImpl implements SkillDtoBuilder {
     }
 
     @Override
-    public SkillDtoBuilder setVacancyDtoList(List<VacancyDto> vacancyDtoList) {
-        skillDto.setVacancyDtoList(vacancyDtoList);
+    public SkillDtoBuilder setVacancyIdList(List<Long> vacancyIdList) {
+        skillDto.setVacancyIdList(vacancyIdList);
         return this;
     }
 }

@@ -1,7 +1,5 @@
 package com.epam.esm.builder.dto;
 
-import com.epam.esm.dto.JobApplicationDto;
-import com.epam.esm.dto.SkillDto;
 import com.epam.esm.dto.VacancyDto;
 
 import java.math.BigDecimal;
@@ -19,7 +17,7 @@ public interface VacancyDtoBuilder extends DtoBuilder<VacancyDto, VacancyDtoBuil
 
     VacancyDtoBuilder setEmployer(String employer);
 
-    VacancyDtoBuilder setSkillDtoList(List<SkillDto> skillDtoList);
+    VacancyDtoBuilder setSkillIdList(List<Long> skillIdList);
 
-    VacancyDtoBuilder setJobApplicationDtoList(List<JobApplicationDto> jobApplicationDtoList);
+    VacancyDtoBuilder setJobApplicationIdList(List<Long> jobApplicationIdList);
 }

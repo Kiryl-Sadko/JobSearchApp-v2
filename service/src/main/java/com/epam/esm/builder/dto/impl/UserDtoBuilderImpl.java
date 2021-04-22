@@ -1,12 +1,12 @@
 package com.epam.esm.builder.dto.impl;
 
 import com.epam.esm.builder.dto.UserDtoBuilder;
-import com.epam.esm.dto.JobApplicationDto;
-import com.epam.esm.dto.RoleDto;
 import com.epam.esm.dto.UserDto;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class UserDtoBuilderImpl implements UserDtoBuilder {
 
     private UserDto userDto = new UserDto();
@@ -16,8 +16,8 @@ public class UserDtoBuilderImpl implements UserDtoBuilder {
         UserDto result = new UserDto();
         result.setId(userDto.getId());
         result.setName(userDto.getName());
-        result.setRoleDtoList(userDto.getRoleDtoList());
-        result.setApplicationDtoList(userDto.getApplicationDtoList());
+        result.setRoleIdList(userDto.getRoleIdList());
+        result.setApplicationIdList(userDto.getJobApplicationIdList());
         this.reset();
         return result;
     }
@@ -41,14 +41,20 @@ public class UserDtoBuilderImpl implements UserDtoBuilder {
     }
 
     @Override
-    public UserDtoBuilder setRoleDtoList(List<RoleDto> roleDtoList) {
-        userDto.setRoleDtoList(roleDtoList);
+    public UserDtoBuilder setPassword(String password) {
+        userDto.setPassword(password);
         return this;
     }
 
     @Override
-    public UserDtoBuilder setJobApplicationDtoList(List<JobApplicationDto> jobApplicationDtoList) {
-        userDto.setApplicationDtoList(jobApplicationDtoList);
+    public UserDtoBuilder setRoleIdList(List<Long> roleIdList) {
+        userDto.setRoleIdList(roleIdList);
+        return this;
+    }
+
+    @Override
+    public UserDtoBuilder setJobApplicationIdList(List<Long> jobApplicationIdList) {
+        userDto.setApplicationIdList(jobApplicationIdList);
         return this;
     }
 }

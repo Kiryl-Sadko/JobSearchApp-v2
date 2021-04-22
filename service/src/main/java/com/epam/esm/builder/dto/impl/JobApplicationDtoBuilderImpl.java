@@ -4,9 +4,11 @@ import com.epam.esm.builder.dto.JobApplicationDtoBuilder;
 import com.epam.esm.dto.JobApplicationDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.VacancyDto;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+@Component
 public class JobApplicationDtoBuilderImpl implements JobApplicationDtoBuilder {
 
     private JobApplicationDto jobApplicationDto = new JobApplicationDto();
@@ -30,7 +32,7 @@ public class JobApplicationDtoBuilderImpl implements JobApplicationDtoBuilder {
     }
 
     @Override
-    public JobApplicationDtoBuilder setId(Long id) {
+    public JobApplicationDtoBuilder setId(java.lang.Long id) {
         jobApplicationDto.setId(id);
         return this;
     }

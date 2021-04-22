@@ -1,13 +1,13 @@
 package com.epam.esm.builder.dto.impl;
 
 import com.epam.esm.builder.dto.VacancyDtoBuilder;
-import com.epam.esm.dto.JobApplicationDto;
-import com.epam.esm.dto.SkillDto;
 import com.epam.esm.dto.VacancyDto;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Component
 public class VacancyDtoBuilderImpl implements VacancyDtoBuilder {
 
     private VacancyDto vacancyDto = new VacancyDto();
@@ -21,8 +21,8 @@ public class VacancyDtoBuilderImpl implements VacancyDtoBuilder {
         result.setEmployer(vacancyDto.getEmployer());
         result.setLocation(vacancyDto.getLocation());
         result.setPlacementDate(vacancyDto.getPlacementDate());
-        result.setSkillDtoList(vacancyDto.getSkillDtoList());
-        result.setApplicationDtoList(vacancyDto.getApplicationDtoList());
+        result.setSkillIdList(vacancyDto.getSkillIdList());
+        result.setJobApplicationIdList(vacancyDto.getJobApplicationIdList());
         this.reset();
         return result;
     }
@@ -34,7 +34,7 @@ public class VacancyDtoBuilderImpl implements VacancyDtoBuilder {
     }
 
     @Override
-    public VacancyDtoBuilder setId(Long id) {
+    public VacancyDtoBuilder setId(java.lang.Long id) {
         vacancyDto.setId(id);
         return this;
     }
@@ -70,14 +70,14 @@ public class VacancyDtoBuilderImpl implements VacancyDtoBuilder {
     }
 
     @Override
-    public VacancyDtoBuilder setSkillDtoList(List<SkillDto> skillDtoList) {
-        vacancyDto.setSkillDtoList(skillDtoList);
+    public VacancyDtoBuilder setSkillIdList(List<Long> skillIdList) {
+        vacancyDto.setSkillIdList(skillIdList);
         return this;
     }
 
     @Override
-    public VacancyDtoBuilder setJobApplicationDtoList(List<JobApplicationDto> jobApplicationDtoList) {
-        vacancyDto.setApplicationDtoList(jobApplicationDtoList);
+    public VacancyDtoBuilder setJobApplicationIdList(List<Long> jobApplicationIdList) {
+        vacancyDto.setJobApplicationIdList(jobApplicationIdList);
         return this;
     }
 }

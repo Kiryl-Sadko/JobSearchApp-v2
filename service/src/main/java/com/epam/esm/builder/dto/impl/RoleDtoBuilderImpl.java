@@ -2,10 +2,11 @@ package com.epam.esm.builder.dto.impl;
 
 import com.epam.esm.builder.dto.RoleDtoBuilder;
 import com.epam.esm.dto.RoleDto;
-import com.epam.esm.dto.UserDto;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class RoleDtoBuilderImpl implements RoleDtoBuilder {
 
     private RoleDto roleDto = new RoleDto();
@@ -15,7 +16,7 @@ public class RoleDtoBuilderImpl implements RoleDtoBuilder {
         RoleDto result = new RoleDto();
         result.setId(roleDto.getId());
         result.setName(roleDto.getName());
-        result.setUserDtoList(roleDto.getUserDtoList());
+        result.setUserIdList(roleDto.getUserIdList());
         this.reset();
         return result;
     }
@@ -39,8 +40,8 @@ public class RoleDtoBuilderImpl implements RoleDtoBuilder {
     }
 
     @Override
-    public RoleDtoBuilder setUserDtoList(List<UserDto> userDtoList) {
-        roleDto.setUserDtoList(userDtoList);
+    public RoleDtoBuilder setUserIdList(List<Long> userIdList) {
+        roleDto.setUserIdList(userIdList);
         return this;
     }
 }
