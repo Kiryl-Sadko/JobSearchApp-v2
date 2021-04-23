@@ -2,7 +2,6 @@ package com.epam.esm.repository;
 
 import com.epam.esm.config.PersistenceConfig;
 import com.epam.esm.entity.JobApplication;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +12,7 @@ import org.springframework.test.context.jdbc.SqlGroup;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.*;
 
 @SpringBootTest(classes = PersistenceConfig.class)
@@ -28,26 +28,26 @@ public class JobApplicationRepositoryTest {
     @Test
     public void shouldFindAllJobApplications() {
         Page<JobApplication> all = repository.findAll(PageRequest.of(0, 5));
-        Assertions.assertEquals(4, all.getContent().size());
+        assertEquals(4, all.getContent().size());
     }
 
     @Test
     public void shouldFindJobApplicationById() {
         JobApplication jobApplication = repository.findById(1L).orElseThrow();
-        Assertions.assertEquals(1L, jobApplication.getVacancy().getId());
+        assertEquals(1L, jobApplication.getVacancy().getId());
     }
 
     @Test
     public void shouldFindJobApplicationsByUserId() {
         Page<JobApplication> byUserId = repository.findByUserId(1L, PageRequest.of(0, 5));
         List<JobApplication> applicationList = byUserId.getContent();
-        Assertions.assertEquals(4, applicationList.size());
+        assertEquals(4, applicationList.size());
     }
 
     @Test
     public void shouldDeleteById() {
         repository.deleteById(1L);
         int size = repository.findAll().size();
-        Assertions.assertEquals(3, size);
+        assertEquals(3, size);
     }
 }
