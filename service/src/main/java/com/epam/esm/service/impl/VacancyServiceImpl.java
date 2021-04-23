@@ -120,17 +120,11 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     @Transactional
     public Long save(VacancyDto dto) {
-        Set<ConstraintViolation<VacancyDto>> violations = validator.validate(dto);
-        if (violations.isEmpty()) {
-            Vacancy entity = vacancyConverter.convertToEntity(dto);
-            entity = vacancyRepository.save(entity);
-            LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
-            return entity.getId();
-        } else {
-            String message = MessageFormat.format("This dto {0} is invalid, check violations: {1}", dto, violations);
-            LOGGER.error(message);
-            throw new InvalidDtoException(message);
-        }
+        validate(dto);
+        Vacancy entity = vacancyConverter.convertToEntity(dto);
+        entity = vacancyRepository.save(entity);
+        LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
+        return entity.getId();
     }
 
     @Override
@@ -149,5 +143,14 @@ public class VacancyServiceImpl implements VacancyService {
             vacancies.forEach(entity -> result.add(vacancyConverter.convertToDto(entity)));
         }
         return result;
+    }
+
+    private void validate(VacancyDto dto) {
+        Set<ConstraintViolation<VacancyDto>> violations = validator.validate(dto);
+        if (!violations.isEmpty()) {
+            String message = MessageFormat.format("This dto {0} is invalid, check violations: {1}", dto, violations);
+            LOGGER.error(message);
+            throw new InvalidDtoException(message);
+        }
     }
 }

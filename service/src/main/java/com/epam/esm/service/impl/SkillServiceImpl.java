@@ -98,17 +98,12 @@ public class SkillServiceImpl implements SkillService {
     @Override
     @Transactional
     public Long save(SkillDto dto) {
-        Set<ConstraintViolation<SkillDto>> violations = validator.validate(dto);
-        if (violations.isEmpty()) {
-            Skill entity = converter.convertToEntity(dto);
-            entity = skillRepository.save(entity);
-            LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
-            return entity.getId();
-        } else {
-            String message = MessageFormat.format("This dto {0} is invalid, check violations: {1}", dto, violations);
-            LOGGER.error(message);
-            throw new InvalidDtoException(message);
-        }
+        validate(dto);
+        Skill entity = converter.convertToEntity(dto);
+        entity = skillRepository.save(entity);
+        LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
+        return entity.getId();
+
     }
 
     @Override
@@ -128,5 +123,14 @@ public class SkillServiceImpl implements SkillService {
     public SkillDto findTheMostWidelyUsedSkillWithHighestSalary() {
         Skill skill = skillRepository.findTheMostWidelyUsedSkillWithHighestSalary().orElseThrow();
         return converter.convertToDto(skill);
+    }
+
+    private void validate(SkillDto dto) {
+        Set<ConstraintViolation<SkillDto>> violations = validator.validate(dto);
+        if (!violations.isEmpty()) {
+            String message = MessageFormat.format("This dto {0} is invalid, check violations: {1}", dto, violations);
+            LOGGER.error(message);
+            throw new InvalidDtoException(message);
+        }
     }
 }

@@ -116,17 +116,11 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     @Override
     @Transactional(readOnly = true)
     public Long save(JobApplicationDto dto) {
-        Set<ConstraintViolation<JobApplicationDto>> violations = validator.validate(dto);
-        if (violations.isEmpty()) {
-            JobApplication entity = converter.convertToEntity(dto);
-            entity = jobApplicationRepository.save(entity);
-            LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
-            return entity.getId();
-        } else {
-            String message = MessageFormat.format("This dto {0} is invalid, check violations: {1}", dto, violations);
-            LOGGER.error(message);
-            throw new InvalidDtoException(message);
-        }
+        validate(dto);
+        JobApplication entity = converter.convertToEntity(dto);
+        entity = jobApplicationRepository.save(entity);
+        LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
+        return entity.getId();
     }
 
     @Override
@@ -152,5 +146,14 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         jobApplication.setResponseDate(now);
         jobApplication = jobApplicationRepository.save(jobApplication);
         return converter.convertToDto(jobApplication);
+    }
+
+    private void validate(JobApplicationDto dto) {
+        Set<ConstraintViolation<JobApplicationDto>> violations = validator.validate(dto);
+        if (!violations.isEmpty()) {
+            String message = MessageFormat.format("This dto {0} is invalid, check violations: {1}", dto, violations);
+            LOGGER.error(message);
+            throw new InvalidDtoException(message);
+        }
     }
 }

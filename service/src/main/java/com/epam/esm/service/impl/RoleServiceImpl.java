@@ -97,13 +97,17 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional
     public Long save(RoleDto dto) {
+        validate(dto);
+        Role entity = converter.convertToEntity(dto);
+        entity = roleRepository.save(entity);
+        LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
+        return entity.getId();
+
+    }
+
+    private void validate(RoleDto dto) {
         Set<ConstraintViolation<RoleDto>> violations = validator.validate(dto);
-        if (violations.isEmpty()) {
-            Role entity = converter.convertToEntity(dto);
-            entity = roleRepository.save(entity);
-            LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
-            return entity.getId();
-        } else {
+        if (!violations.isEmpty()) {
             String message = MessageFormat.format("This dto {0} is invalid, check violations: {1}", dto, violations);
             LOGGER.error(message);
             throw new InvalidDtoException(message);

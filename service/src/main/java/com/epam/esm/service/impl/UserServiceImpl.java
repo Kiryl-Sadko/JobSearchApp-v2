@@ -105,13 +105,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Long save(UserDto dto) {
+        validate(dto);
+        User entity = converter.convertToEntity(dto);
+        entity = userRepository.save(entity);
+        LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
+        return entity.getId();
+    }
+
+    private void validate(UserDto dto) {
         Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
-        if (violations.isEmpty()) {
-            User entity = converter.convertToEntity(dto);
-            entity = userRepository.save(entity);
-            LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
-            return entity.getId();
-        } else {
+        if (!violations.isEmpty()) {
             String message = MessageFormat.format("This dto {0} is invalid, check violations: {1}", dto, violations);
             LOGGER.error(message);
             throw new InvalidDtoException(message);
