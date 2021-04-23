@@ -39,7 +39,9 @@ public class Skill implements Entity, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Skill skill = (Skill) o;
-        return Objects.equals(id, skill.id) && Objects.equals(name, skill.name) && Objects.equals(vacancies, skill.vacancies);
+        return Objects.equals(id, skill.id)
+                && Objects.equals(name, skill.name)
+                && Objects.equals(vacancies, skill.vacancies);
     }
 
     @Override

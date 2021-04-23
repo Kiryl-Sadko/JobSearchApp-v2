@@ -59,7 +59,11 @@ public class User implements Entity, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles) && Objects.equals(jobApplications, user.jobApplications);
+        return Objects.equals(id, user.id)
+                && Objects.equals(name, user.name)
+                && Objects.equals(password, user.password)
+                && Objects.equals(roles, user.roles)
+                && Objects.equals(jobApplications, user.jobApplications);
     }
 
     @Override

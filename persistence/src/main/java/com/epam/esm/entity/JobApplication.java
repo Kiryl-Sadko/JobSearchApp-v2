@@ -58,7 +58,11 @@ public class JobApplication implements Entity, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JobApplication that = (JobApplication) o;
-        return Objects.equals(id, that.id) && Objects.equals(user, that.user) && Objects.equals(vacancy, that.vacancy) && Objects.equals(responseDate, that.responseDate) && Objects.equals(salary, that.salary);
+        return Objects.equals(id, that.id)
+                && Objects.equals(user, that.user)
+                && Objects.equals(vacancy, that.vacancy)
+                && Objects.equals(responseDate, that.responseDate)
+                && Objects.equals(salary, that.salary);
     }
 
     @Override

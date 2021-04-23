@@ -40,7 +40,9 @@ public class Role implements Entity, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Role role = (Role) o;
-        return Objects.equals(id, role.id) && Objects.equals(name, role.name) && Objects.equals(users, role.users);
+        return Objects.equals(id, role.id)
+                && Objects.equals(name, role.name)
+                && Objects.equals(users, role.users);
     }
 
     @Override

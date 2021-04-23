@@ -73,7 +73,15 @@ public class Vacancy implements Entity, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Vacancy vacancy = (Vacancy) o;
-        return isDeleted == vacancy.isDeleted && Objects.equals(id, vacancy.id) && Objects.equals(position, vacancy.position) && Objects.equals(employer, vacancy.employer) && Objects.equals(placementDate, vacancy.placementDate) && Objects.equals(salary, vacancy.salary) && Objects.equals(location, vacancy.location) && Objects.equals(skills, vacancy.skills) && Objects.equals(jobApplications, vacancy.jobApplications);
+        return isDeleted == vacancy.isDeleted
+                && Objects.equals(id, vacancy.id)
+                && Objects.equals(position, vacancy.position)
+                && Objects.equals(employer, vacancy.employer)
+                && Objects.equals(placementDate, vacancy.placementDate)
+                && Objects.equals(salary, vacancy.salary)
+                && Objects.equals(location, vacancy.location)
+                && Objects.equals(skills, vacancy.skills)
+                && Objects.equals(jobApplications, vacancy.jobApplications);
     }
 
     @Override
