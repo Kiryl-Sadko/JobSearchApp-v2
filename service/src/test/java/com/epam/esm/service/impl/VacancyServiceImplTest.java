@@ -79,7 +79,7 @@ class VacancyServiceImplTest {
         VacancyDto dto = new VacancyDto();
         dto.setId(100L);
         dto.setPosition("Test");
-        dto.setPlacementDate("2018-08-30 01:12:15");
+        dto.setPlacementDate("2018-08-30T01:12:15");
         dto.setLocation("location");
         dto.setSalary(new BigDecimal(100));
         dto.setEmployer("Emp");

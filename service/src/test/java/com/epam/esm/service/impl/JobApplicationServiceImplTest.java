@@ -77,7 +77,7 @@ public class JobApplicationServiceImplTest {
         dto.setSalary(BigDecimal.valueOf(120));
         dto.setUserDto(userService.findById(1L));
         dto.setVacancyDto(vacancyService.findById(2L));
-        dto.setResponseDate("2018-08-30 01:12:15");
+        dto.setResponseDate("2018-08-30T01:12:15");
         Long id = service.save(dto);
         JobApplicationDto savedDto = service.findById(id);
         assertEquals(dto.getSalary(), savedDto.getSalary().setScale(0));

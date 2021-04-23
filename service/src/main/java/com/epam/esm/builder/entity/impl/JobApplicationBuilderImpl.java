@@ -7,7 +7,7 @@ import com.epam.esm.entity.Vacancy;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 
 @Component
 public class JobApplicationBuilderImpl implements JobApplicationBuilder {
@@ -51,7 +51,7 @@ public class JobApplicationBuilderImpl implements JobApplicationBuilder {
     }
 
     @Override
-    public JobApplicationBuilder setResponseDate(Calendar responseDate) {
+    public JobApplicationBuilder setResponseDate(LocalDateTime responseDate) {
         jobApplication.setResponseDate(responseDate);
         return this;
     }

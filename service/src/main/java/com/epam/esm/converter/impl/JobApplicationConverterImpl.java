@@ -50,10 +50,13 @@ public class JobApplicationConverterImpl implements JobApplicationConverter {
     public JobApplicationDto convertToDto(JobApplication entity) {
         UserDto userDto = userConverter.convertToDto(entity.getUser());
         VacancyDto vacancyDto = vacancyConverter.convertToDto(entity.getVacancy());
-
+        String stringFromDate = null;
+        if (entity.getResponseDate() != null) {
+            stringFromDate = getStringFromDate(entity.getResponseDate());
+        }
         return dtoBuilder.setId(entity.getId())
                 .setSalary(entity.getSalary())
-                .setResponseDate(getStringFromDate(entity.getResponseDate()))
+                .setResponseDate(stringFromDate)
                 .setUserDto(userDto)
                 .setVacancyDto(vacancyDto)
                 .build();

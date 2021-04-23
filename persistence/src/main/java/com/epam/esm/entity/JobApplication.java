@@ -12,7 +12,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @javax.persistence.Entity
@@ -32,7 +32,7 @@ public class JobApplication implements Entity, Serializable {
     private Vacancy vacancy;
 
     @Column(name = "response_date")
-    private Calendar responseDate;
+    private LocalDateTime responseDate;
 
     @Column(name = "salary")
     @NotNull(message = "To can't be null")
@@ -94,11 +94,11 @@ public class JobApplication implements Entity, Serializable {
         this.vacancy = vacancy;
     }
 
-    public Calendar getResponseDate() {
+    public LocalDateTime getResponseDate() {
         return responseDate;
     }
 
-    public void setResponseDate(Calendar responseDate) {
+    public void setResponseDate(LocalDateTime responseDate) {
         this.responseDate = responseDate;
     }
 

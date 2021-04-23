@@ -7,7 +7,7 @@ import com.epam.esm.entity.Vacancy;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -56,7 +56,7 @@ public class VacancyBuilderImpl implements VacancyBuilder {
     }
 
     @Override
-    public VacancyBuilder setPlacementDate(Calendar placementDate) {
+    public VacancyBuilder setPlacementDate(LocalDateTime placementDate) {
         vacancy.setPlacementDate(placementDate);
         return this;
     }

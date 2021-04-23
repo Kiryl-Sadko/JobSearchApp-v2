@@ -133,13 +133,6 @@ public class VacancyServiceImpl implements VacancyService {
         }
     }
 
-    //TODO what this method need to do????
-    @Override
-    @Transactional
-    public List<Skill> findOrCreateSkill(List<Skill> skillList) {
-        return null;
-    }
-
     @Override
     @Transactional
     public List<VacancyDto> findVacancyBySkill(List<SkillDto> skillDtoList, Pageable pageable) {

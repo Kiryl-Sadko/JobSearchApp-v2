@@ -23,8 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -143,12 +143,13 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     public JobApplicationDto create(Long userId, Long vacancyId) {
         User user = userRepository.findById(userId).orElseThrow();
         Vacancy vacancy = vacancyRepository.findById(vacancyId).orElseThrow();
+        LocalDateTime now = LocalDateTime.now();
 
         JobApplication jobApplication = new JobApplication();
         jobApplication.setUser(user);
         jobApplication.setVacancy(vacancy);
         jobApplication.setSalary(vacancy.getSalary());
-        jobApplication.setResponseDate(Calendar.getInstance());
+        jobApplication.setResponseDate(now);
         jobApplication = jobApplicationRepository.save(jobApplication);
         return converter.convertToDto(jobApplication);
     }

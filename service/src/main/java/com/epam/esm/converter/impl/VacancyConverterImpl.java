@@ -11,8 +11,8 @@ import com.epam.esm.repository.JobApplicationRepository;
 import com.epam.esm.repository.SkillRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import static com.epam.esm.service.Utils.*;
@@ -42,16 +42,16 @@ public class VacancyConverterImpl implements VacancyConverter {
         List<Long> jobApplicationIdList = dto.getJobApplicationIdList();
         List<JobApplication> jobApplications = jobApplicationRepository.findAllById(jobApplicationIdList);
 
-        Calendar calendarFromString = null;
+        LocalDateTime localDateTime = null;
         if (dto.getPlacementDate() != null) {
-            calendarFromString = getCalendarFromString(dto.getPlacementDate());
+            localDateTime = getCalendarFromString(dto.getPlacementDate());
         }
         return entityBuilder.setId(dto.getId())
                 .setPosition(dto.getPosition())
                 .setEmployer(dto.getEmployer())
                 .setLocation(dto.getLocation())
                 .setSalary(dto.getSalary())
-                .setPlacementDate(calendarFromString)
+                .setPlacementDate(localDateTime)
                 .setSkills(skills)
                 .setJobApplications(jobApplications)
                 .build();

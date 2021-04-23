@@ -5,7 +5,7 @@ import com.epam.esm.entity.Skill;
 import com.epam.esm.entity.Vacancy;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface VacancyBuilder extends EntityBuilder<Vacancy, VacancyBuilder> {
@@ -14,7 +14,7 @@ public interface VacancyBuilder extends EntityBuilder<Vacancy, VacancyBuilder> {
 
     VacancyBuilder setEmployer(String employer);
 
-    VacancyBuilder setPlacementDate(Calendar placementDate);
+    VacancyBuilder setPlacementDate(LocalDateTime placementDate);
 
     VacancyBuilder setSalary(BigDecimal salary);
 

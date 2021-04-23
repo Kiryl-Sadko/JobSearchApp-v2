@@ -12,7 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,7 +31,7 @@ public class Vacancy implements Entity, Serializable {
     private String employer;
 
     @Column(name = "placement_date")
-    private Calendar placementDate;
+    private LocalDateTime placementDate;
 
     @Column(name = "salary")
     private BigDecimal salary;
@@ -113,11 +113,11 @@ public class Vacancy implements Entity, Serializable {
         this.employer = employer;
     }
 
-    public Calendar getPlacementDate() {
+    public LocalDateTime getPlacementDate() {
         return placementDate;
     }
 
-    public void setPlacementDate(Calendar placementDate) {
+    public void setPlacementDate(LocalDateTime placementDate) {
         this.placementDate = placementDate;
     }
 
