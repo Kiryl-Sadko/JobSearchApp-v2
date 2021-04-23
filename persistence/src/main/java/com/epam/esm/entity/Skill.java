@@ -1,7 +1,6 @@
 package com.epam.esm.entity;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,9 +11,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
+@javax.persistence.Entity
 @Table(name = "skill")
-public class Skill implements Serializable {
+public class Skill implements Entity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +39,9 @@ public class Skill implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Skill skill = (Skill) o;
-        return Objects.equals(id, skill.id) && Objects.equals(name, skill.name) && Objects.equals(vacancies, skill.vacancies);
+        return Objects.equals(id, skill.id)
+                && Objects.equals(name, skill.name)
+                && Objects.equals(vacancies, skill.vacancies);
     }
 
     @Override

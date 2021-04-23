@@ -2,7 +2,6 @@ package com.epam.esm.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,9 +16,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
+@javax.persistence.Entity
 @Table(name = "user")
-public class User implements Serializable {
+public class User implements Entity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +40,7 @@ public class User implements Serializable {
     private List<Role> roles;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<JobApplication> applications;
+    private List<JobApplication> jobApplications;
 
     public User() {
     }
@@ -52,8 +51,6 @@ public class User implements Serializable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
-                ", roles=" + roles +
-                ", applications=" + applications +
                 '}';
     }
 
@@ -62,12 +59,16 @@ public class User implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles) && Objects.equals(applications, user.applications);
+        return Objects.equals(id, user.id)
+                && Objects.equals(name, user.name)
+                && Objects.equals(password, user.password)
+                && Objects.equals(roles, user.roles)
+                && Objects.equals(jobApplications, user.jobApplications);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, password, roles, applications);
+        return Objects.hash(id, name, password, roles, jobApplications);
     }
 
     public Long getId() {
@@ -102,11 +103,11 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
-    public List<JobApplication> getApplications() {
-        return applications;
+    public List<JobApplication> getJobApplications() {
+        return jobApplications;
     }
 
-    public void setApplications(List<JobApplication> applications) {
-        this.applications = applications;
+    public void setJobApplications(List<JobApplication> jobApplications) {
+        this.jobApplications = jobApplications;
     }
 }

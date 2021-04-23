@@ -2,8 +2,6 @@ package com.epam.esm.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,13 +12,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
+@javax.persistence.Entity
 @Table(name = "vacancy")
-public class Vacancy implements Serializable {
+public class Vacancy implements Entity, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +31,7 @@ public class Vacancy implements Serializable {
     private String employer;
 
     @Column(name = "placement_date")
-    private Calendar placementDate;
+    private LocalDateTime placementDate;
 
     @Column(name = "salary")
     private BigDecimal salary;
@@ -51,8 +49,8 @@ public class Vacancy implements Serializable {
     )
     private List<Skill> skills;
 
-    @OneToMany(mappedBy = "vacancy", fetch = FetchType.EAGER)
-    private List<JobApplication> applications;
+    @OneToMany(mappedBy = "vacancy")
+    private List<JobApplication> jobApplications;
 
     public Vacancy() {
     }
@@ -67,8 +65,6 @@ public class Vacancy implements Serializable {
                 ", salary=" + salary +
                 ", location='" + location + '\'' +
                 ", isDeleted=" + isDeleted +
-                ", skills=" + skills +
-                ", applications=" + applications +
                 '}';
     }
 
@@ -77,12 +73,20 @@ public class Vacancy implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Vacancy vacancy = (Vacancy) o;
-        return isDeleted == vacancy.isDeleted && Objects.equals(id, vacancy.id) && Objects.equals(position, vacancy.position) && Objects.equals(employer, vacancy.employer) && Objects.equals(placementDate, vacancy.placementDate) && Objects.equals(salary, vacancy.salary) && Objects.equals(location, vacancy.location) && Objects.equals(skills, vacancy.skills) && Objects.equals(applications, vacancy.applications);
+        return isDeleted == vacancy.isDeleted
+                && Objects.equals(id, vacancy.id)
+                && Objects.equals(position, vacancy.position)
+                && Objects.equals(employer, vacancy.employer)
+                && Objects.equals(placementDate, vacancy.placementDate)
+                && Objects.equals(salary, vacancy.salary)
+                && Objects.equals(location, vacancy.location)
+                && Objects.equals(skills, vacancy.skills)
+                && Objects.equals(jobApplications, vacancy.jobApplications);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, position, employer, placementDate, salary, location, isDeleted, skills, applications);
+        return Objects.hash(id, position, employer, placementDate, salary, location, isDeleted, skills, jobApplications);
     }
 
     public Long getId() {
@@ -109,11 +113,11 @@ public class Vacancy implements Serializable {
         this.employer = employer;
     }
 
-    public Calendar getPlacementDate() {
+    public LocalDateTime getPlacementDate() {
         return placementDate;
     }
 
-    public void setPlacementDate(Calendar placementDate) {
+    public void setPlacementDate(LocalDateTime placementDate) {
         this.placementDate = placementDate;
     }
 
@@ -149,11 +153,11 @@ public class Vacancy implements Serializable {
         this.skills = skills;
     }
 
-    public List<JobApplication> getApplications() {
-        return applications;
+    public List<JobApplication> getJobApplications() {
+        return jobApplications;
     }
 
-    public void setApplications(List<JobApplication> applications) {
-        this.applications = applications;
+    public void setJobApplications(List<JobApplication> jobApplications) {
+        this.jobApplications = jobApplications;
     }
 }

@@ -44,6 +44,14 @@ subprojects {
     test {
         useJUnitPlatform()
     }
+
+    bootJar {
+        enabled = false
+    }
+
+    jar {
+        enabled = true
+    }
 }
 
 project(":persistence") {
@@ -60,12 +68,14 @@ project(":persistence") {
 project(":service") {
 
     dependencies {
-        compile project (':persistence')
+        compile project(':persistence')
 
         implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
         implementation group: 'org.springframework.hateoas', name: 'spring-hateoas'
         implementation group: 'org.springframework', name: 'spring-context'
 
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
+        
         testImplementation group: 'com.h2database', name: 'h2'
     }
 }
