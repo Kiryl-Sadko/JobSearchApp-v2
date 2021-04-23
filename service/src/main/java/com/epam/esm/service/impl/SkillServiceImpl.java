@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -63,7 +64,7 @@ public class SkillServiceImpl implements SkillService {
         if (optionalSkill.isPresent()) {
             Skill skill = optionalSkill.get();
             List<Vacancy> vacancies = skill.getVacancies();
-            if (vacancies.isEmpty()) {
+            if (CollectionUtils.isEmpty(vacancies)) {
                 skillRepository.deleteById(id);
                 LOGGER.info("Skill by id={} has deleted", id);
                 return true;

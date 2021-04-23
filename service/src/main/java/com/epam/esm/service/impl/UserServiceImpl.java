@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -63,7 +64,7 @@ public class UserServiceImpl implements UserService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             List<JobApplication> jobApplications = user.getJobApplications();
-            if (jobApplications.isEmpty()) {
+            if (CollectionUtils.isEmpty(jobApplications)) {
                 userRepository.deleteById(id);
                 LOGGER.info("User by id={} has deleted", id);
                 return true;

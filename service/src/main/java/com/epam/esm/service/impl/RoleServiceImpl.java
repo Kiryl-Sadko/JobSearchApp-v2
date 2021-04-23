@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -62,7 +63,7 @@ public class RoleServiceImpl implements RoleService {
         if (optionalRole.isPresent()) {
             Role role = optionalRole.get();
             List<User> users = role.getUsers();
-            if (users.isEmpty()) {
+            if (CollectionUtils.isEmpty(users)) {
                 roleRepository.deleteById(id);
                 LOGGER.info("Role by id={} has deleted", id);
                 return true;

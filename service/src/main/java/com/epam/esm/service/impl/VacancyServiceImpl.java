@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -70,7 +71,7 @@ public class VacancyServiceImpl implements VacancyService {
         if (optionalVacancy.isPresent()) {
             Vacancy vacancy = optionalVacancy.get();
             List<JobApplication> jobApplications = vacancy.getJobApplications();
-            if (jobApplications.isEmpty()) {
+            if (CollectionUtils.isEmpty(jobApplications)) {
                 vacancyRepository.deleteById(id);
                 LOGGER.info("Vacancy by id={} has deleted", id);
                 return true;
