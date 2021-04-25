@@ -79,3 +79,14 @@ project(":service") {
         testImplementation group: 'com.h2database', name: 'h2'
     }
 }
+
+project(":web") {
+
+    dependencies {
+        compile project(':service')
+
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.springframework.security:spring-security-test'
+    }
+}

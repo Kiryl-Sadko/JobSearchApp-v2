@@ -12,3 +12,5 @@ rootProject.name = 'jobSearchApp_v2'
 include 'persistence'
 
 include 'service'
+
+include 'web'
