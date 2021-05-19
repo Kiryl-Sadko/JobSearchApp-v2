@@ -12,6 +12,8 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
 
     Page<Skill> findByNameStartsWith(String name, Pageable pageable);
 
+    Optional<Skill> findByName(String name);
+
     @Query(nativeQuery = true,
             value = "SELECT skill.*, COUNT(skill.name) AS qty from job_application\n" +
                     "inner join user u on u.id = job_application.user_id\n" +
@@ -23,4 +25,6 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
                     "desc limit 1) group by skill.name\n" +
                     "order by qty desc limit 1")
     Optional<Skill> findTheMostWidelyUsedSkillWithHighestSalary();
+
+    Skill findTopByOrderByIdDesc();
 }
