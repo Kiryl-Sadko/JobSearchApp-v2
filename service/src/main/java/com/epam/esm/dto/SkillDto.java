@@ -8,11 +8,12 @@ import java.util.Objects;
 
 public class SkillDto extends Dto<SkillDto> {
 
-    @NotNull
+    private static final long serialVersionUID = 2085240706983969964L;
+
     private Long id;
-    @Size(min = 4, max = 10)
-    private String name;
     @NotNull
+    @Size(min = 4, max = 30)
+    private String name;
     private List<Long> vacancyIdList = new ArrayList<>();
 
     public SkillDto() {

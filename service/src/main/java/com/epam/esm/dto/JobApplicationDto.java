@@ -7,7 +7,8 @@ import java.util.Objects;
 
 public class JobApplicationDto extends Dto<JobApplicationDto> {
 
-    @NotNull
+    private static final long serialVersionUID = 4542613022872771213L;
+
     private Long id;
     @NotNull
     private UserDto userDto;
@@ -25,10 +26,10 @@ public class JobApplicationDto extends Dto<JobApplicationDto> {
     public String toString() {
         return "JobApplicationDto{" +
                 "id=" + id +
-                ", userDto=" + userDto +
-                ", vacancyDto=" + vacancyDto +
                 ", responseDate='" + responseDate + '\'' +
                 ", salary=" + salary +
+                ", userDto=" + userDto +
+                ", vacancyDto=" + vacancyDto +
                 '}';
     }
 

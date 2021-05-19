@@ -8,15 +8,16 @@ import java.util.Objects;
 
 public class UserDto extends Dto<UserDto> {
 
-    @NotNull
+    private static final long serialVersionUID = 1414431181820857380L;
+
     private Long id;
-    @Size(min = 4, max = 15)
+    @NotNull
+    @Size(min = 4, max = 30)
     private String name;
-    @Size(min = 4, max = 15)
+    @NotNull
+    @Size(min = 4, max = 30)
     private String password;
-    @NotNull
     private List<Long> roleIdList = new ArrayList<>();
-    @NotNull
     private List<Long> applicationIdList = new ArrayList<>();
 
     public UserDto() {

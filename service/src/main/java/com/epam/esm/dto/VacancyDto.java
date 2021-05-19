@@ -1,30 +1,32 @@
 package com.epam.esm.dto;
 
+import com.epam.esm.service.Utils;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class VacancyDto extends Dto<VacancyDto> {
 
-    @NotNull
+    private static final long serialVersionUID = 807019565472588846L;
+
     private Long id;
-    @Size(min = 3, max = 20)
+    @NotNull
+    @Size(min = 3, max = 30)
     private String position;
-    @Size(min = 3, max = 15)
-    private String employer;
-    @NotNull
-    private String placementDate;
-    @Min(value = 100)
-    private BigDecimal salary;
+    @Size(min = 3, max = 30)
+    private String employer = "unknown";
+    private String placementDate = Utils.getStringFromDate(LocalDateTime.now());
+    @Min(value = 0)
+    private BigDecimal salary = BigDecimal.valueOf(0);
     @Size(min = 3, max = 20)
-    private String location;
-    @NotNull
+    private String location = "unknown";
     private List<Long> skillIdList = new ArrayList<>();
-    @NotNull
     private List<Long> jobApplicationIdList = new ArrayList<>();
 
     public VacancyDto() {

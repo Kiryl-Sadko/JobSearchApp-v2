@@ -8,11 +8,12 @@ import java.util.Objects;
 
 public class RoleDto extends Dto<RoleDto> {
 
-    @NotNull
+    private static final long serialVersionUID = 6746907035784755098L;
+
     private Long id;
-    @Size(min = 4, max = 10)
-    private String name;
     @NotNull
+    @Size(min = 4, max = 30)
+    private String name;
     private List<Long> userIdList = new ArrayList<>();
 
     public RoleDto() {
