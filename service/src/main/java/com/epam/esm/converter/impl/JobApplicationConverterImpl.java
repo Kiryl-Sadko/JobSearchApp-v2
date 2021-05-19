@@ -38,7 +38,8 @@ public class JobApplicationConverterImpl implements JobApplicationConverter {
         User user = userConverter.convertToEntity(dto.getUserDto());
         Vacancy vacancy = vacancyConverter.convertToEntity(dto.getVacancyDto());
 
-        return entityBuilder.setId(dto.getId())
+        return entityBuilder
+                .setId(dto.getId())
                 .setSalary(dto.getSalary())
                 .setResponseDate(getCalendarFromString(dto.getResponseDate()))
                 .setUser(user)
@@ -54,7 +55,8 @@ public class JobApplicationConverterImpl implements JobApplicationConverter {
         if (entity.getResponseDate() != null) {
             stringFromDate = getStringFromDate(entity.getResponseDate());
         }
-        return dtoBuilder.setId(entity.getId())
+        return dtoBuilder
+                .setId(entity.getId())
                 .setSalary(entity.getSalary())
                 .setResponseDate(stringFromDate)
                 .setUserDto(userDto)
