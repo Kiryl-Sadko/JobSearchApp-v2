@@ -6,7 +6,7 @@ import com.epam.esm.entity.Vacancy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 public interface VacancyBuilder extends EntityBuilder<Vacancy, VacancyBuilder> {
 
@@ -20,7 +20,7 @@ public interface VacancyBuilder extends EntityBuilder<Vacancy, VacancyBuilder> {
 
     VacancyBuilder setLocation(String location);
 
-    VacancyBuilder setSkills(List<Skill> skills);
+    VacancyBuilder setSkills(Set<Skill> skills);
 
-    VacancyBuilder setJobApplications(List<JobApplication> jobApplications);
+    VacancyBuilder setJobApplications(Set<JobApplication> jobApplications);
 }

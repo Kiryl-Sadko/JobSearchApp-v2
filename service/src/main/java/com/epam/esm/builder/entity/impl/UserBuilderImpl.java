@@ -6,7 +6,7 @@ import com.epam.esm.entity.Role;
 import com.epam.esm.entity.User;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 
 @Component
 public class UserBuilderImpl implements UserBuilder {
@@ -50,13 +50,13 @@ public class UserBuilderImpl implements UserBuilder {
     }
 
     @Override
-    public UserBuilder setRoles(List<Role> roles) {
+    public UserBuilder setRoles(Set<Role> roles) {
         user.setRoles(roles);
         return this;
     }
 
     @Override
-    public UserBuilder setJobApplications(List<JobApplication> jobApplications) {
+    public UserBuilder setJobApplications(Set<JobApplication> jobApplications) {
         user.setJobApplications(jobApplications);
         return this;
     }
