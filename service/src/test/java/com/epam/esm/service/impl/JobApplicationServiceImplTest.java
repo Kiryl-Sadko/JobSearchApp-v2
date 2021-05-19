@@ -47,8 +47,10 @@ public class JobApplicationServiceImplTest {
 
     @Test
     void shouldDeleteById() {
-        boolean isDeleted = service.deleteById(1L);
-        assertTrue(isDeleted);
+        List<JobApplicationDto> before = service.findAll();
+        service.deleteById(1L);
+        List<JobApplicationDto> after = service.findAll();
+        assertTrue(before.size() > after.size());
     }
 
     @Test
@@ -58,7 +60,7 @@ public class JobApplicationServiceImplTest {
         dto.setId(1L);
         BigDecimal salary = BigDecimal.valueOf(120);
         dto.setSalary(salary);
-        JobApplicationDto updated = service.update(dto);
+        JobApplicationDto updated = service.partialUpdate(dto);
 
         assertNotEquals(before.getSalary(), updated.getSalary());
         assertEquals(salary, dto.getSalary());
@@ -67,7 +69,7 @@ public class JobApplicationServiceImplTest {
     @Test
     void shouldThrowInvalidIdException() {
         JobApplicationDto dto = new JobApplicationDto();
-        assertThrows(InvalidDtoException.class, () -> service.update(dto));
+        assertThrows(InvalidDtoException.class, () -> service.partialUpdate(dto));
     }
 
     @Test

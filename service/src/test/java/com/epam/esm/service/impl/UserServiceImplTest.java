@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +30,7 @@ public class UserServiceImplTest {
     @Test
     void shouldFindAll() {
         List<UserDto> all = userService.findAll(PageRequest.of(0, 10));
-        assertEquals(3, all.size());
+        assertEquals(4, all.size());
     }
 
     @Test
@@ -40,10 +41,10 @@ public class UserServiceImplTest {
 
     @Test
     void shouldDeleteById() {
-        boolean isDeleted = userService.deleteById(1L);
-        assertFalse(isDeleted);
-        isDeleted = userService.deleteById(3L);
-        assertTrue(isDeleted);
+        List<UserDto> before = userService.findAll();
+        userService.deleteById(4L);
+        List<UserDto> after = userService.findAll();
+        assertTrue(before.size() > after.size());
     }
 
     @Test
@@ -53,7 +54,7 @@ public class UserServiceImplTest {
         userDto.setId(1L);
         String name = "updated name";
         userDto.setName(name);
-        UserDto updated = userService.update(userDto);
+        UserDto updated = userService.partialUpdate(userDto);
 
         assertNotEquals(before.getName(), updated.getName());
         assertEquals(name, userDto.getName());
@@ -62,19 +63,24 @@ public class UserServiceImplTest {
     @Test
     void shouldThrowInvalidIdException() {
         UserDto userDto = new UserDto();
-        assertThrows(InvalidDtoException.class, () -> userService.update(userDto));
+        assertThrows(InvalidDtoException.class, () -> userService.partialUpdate(userDto));
     }
 
     @Test
     void shouldCreateNewUser() {
+        List<Long> rolesIdList = new ArrayList<>();
+        rolesIdList.add(1L);
+        rolesIdList.add(2L);
         UserDto dto = new UserDto();
-        dto.setId(5L);
+        dto.setId(6L);
         dto.setName("Test");
         dto.setPassword("2nd2");
+        dto.setRoleIdList(rolesIdList);
         Long id = userService.save(dto);
         UserDto savedDto = userService.findById(id);
         assertEquals(dto.getName(), savedDto.getName());
         assertNotEquals(dto.getId(), savedDto.getId());
+        assertEquals(rolesIdList, savedDto.getRoleIdList());
     }
 
     @Test

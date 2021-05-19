@@ -30,7 +30,7 @@ public class RoleServiceImplTest {
     @Test
     void shouldFindAll() {
         List<RoleDto> all = roleService.findAll(PageRequest.of(0, 10));
-        assertEquals(2, all.size());
+        assertEquals(3, all.size());
     }
 
     @Test
@@ -41,8 +41,10 @@ public class RoleServiceImplTest {
 
     @Test
     void shouldDeleteById() {
-        boolean isDeleted = roleService.deleteById(1L);
-        assertFalse(isDeleted);
+        List<RoleDto> before = roleService.findAll();
+        roleService.deleteById(3L);
+        List<RoleDto> after = roleService.findAll();
+        assertTrue(before.size() > after.size());
     }
 
     @Test
@@ -52,7 +54,7 @@ public class RoleServiceImplTest {
         roleDto.setId(1L);
         String name = "updated name";
         roleDto.setName(name);
-        RoleDto updated = roleService.update(roleDto);
+        RoleDto updated = roleService.partialUpdate(roleDto);
 
         assertNotEquals(before.getName(), updated.getName());
         assertEquals(name, roleDto.getName());
@@ -61,7 +63,7 @@ public class RoleServiceImplTest {
     @Test
     void shouldThrowInvalidIdException() {
         RoleDto roleDto = new RoleDto();
-        assertThrows(InvalidDtoException.class, () -> roleService.update(roleDto));
+        assertThrows(InvalidDtoException.class, () -> roleService.partialUpdate(roleDto));
     }
 
     @Test
@@ -78,7 +80,6 @@ public class RoleServiceImplTest {
     @Test
     void shouldThrowInvalidDtoException() {
         RoleDto dto = new RoleDto();
-        dto.setName("Test");
         assertThrows(InvalidDtoException.class, () -> roleService.save(dto));
     }
 }

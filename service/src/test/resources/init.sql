@@ -2,6 +2,8 @@ INSERT INTO `job_search_engine`.`role` (`name`)
 VALUES ('ADMIN');
 INSERT INTO `job_search_engine`.`role` (`name`)
 VALUES ('USER');
+INSERT INTO `job_search_engine`.`role` (`name`)
+VALUES ('TEST');
 
 INSERT INTO `user` (`name`, `password`)
 VALUES ('Kiryl', '123');
@@ -9,6 +11,8 @@ INSERT INTO `user` (`name`, `password`)
 VALUES ('user_1', '123');
 INSERT INTO `user` (`name`, `password`)
 VALUES ('user_2', '123');
+INSERT INTO `user` (`name`, `password`)
+VALUES ('test', '123');
 
 
 INSERT INTO `job_search_engine`.`user_role` (`user_id`, `role_id`)
@@ -24,6 +28,8 @@ INSERT INTO `job_search_engine`.`skill` (`name`)
 VALUES (concat('skill_', 2));
 INSERT INTO `job_search_engine`.`skill` (`name`)
 VALUES (concat('skill_', 3));
+INSERT INTO `job_search_engine`.`skill` (`name`)
+VALUES ('test_skill');
 
 INSERT INTO `job_search_engine`.`vacancy` (`salary`, `placement_date`, `employer`, `position`, `location`, `is_deleted`)
 VALUES ('300',
