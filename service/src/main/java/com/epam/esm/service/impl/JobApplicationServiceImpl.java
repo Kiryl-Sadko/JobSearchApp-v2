@@ -133,6 +133,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     }
 
     @Override
+    @Transactional
     public JobApplicationDto update(JobApplicationDto dto) {
         if (dto.getId() == null) {
             LOGGER.info("Entity with id={0} not found.");
