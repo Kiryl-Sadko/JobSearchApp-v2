@@ -9,9 +9,13 @@ public interface CRUDService<D extends RepresentationModel<D>> {
 
     List<D> findAll(Pageable pageable);
 
+    List<D> findAll();
+
     D findById(Long id);
 
-    boolean deleteById(Long id);
+    void deleteById(Long id);
+
+    D partialUpdate(D dto);
 
     D update(D dto);
 

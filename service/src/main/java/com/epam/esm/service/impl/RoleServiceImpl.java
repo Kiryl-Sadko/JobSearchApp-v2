@@ -4,7 +4,9 @@ import com.epam.esm.converter.RoleConverter;
 import com.epam.esm.dto.RoleDto;
 import com.epam.esm.entity.Role;
 import com.epam.esm.entity.User;
+import com.epam.esm.exception.ElementCanNotBeDeleted;
 import com.epam.esm.exception.InvalidDtoException;
+import com.epam.esm.exception.SuchElementAlreadyExistsException;
 import com.epam.esm.repository.RoleRepository;
 import com.epam.esm.service.RoleService;
 import org.apache.logging.log4j.LogManager;
@@ -15,13 +17,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.epam.esm.service.Utils.validate;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -51,44 +55,62 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public RoleDto findById(Long id) {
-        Role role = roleRepository.findById(id).orElseThrow();
-        return converter.convertToDto(role);
+    public List<RoleDto> findAll() {
+        List<Role> all = roleRepository.findAll();
+        List<RoleDto> result = new ArrayList<>();
+        all.forEach(entity -> result.add(converter.convertToDto(entity)));
+        return result;
     }
 
     @Override
     @Transactional
-    public boolean deleteById(Long id) {
+    public RoleDto findById(Long id) {
+        Optional<Role> optional = roleRepository.findById(id);
+        if (optional.isPresent()) {
+            Role role = optional.get();
+            return converter.convertToDto(role);
+        }
+        String message = "The entity not found";
+        LOGGER.error(message);
+        throw new NoSuchElementException(message);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
         Optional<Role> optionalRole = roleRepository.findById(id);
         if (optionalRole.isPresent()) {
             Role role = optionalRole.get();
-            List<User> users = role.getUsers();
+            Set<User> users = role.getUsers();
             if (CollectionUtils.isEmpty(users)) {
                 roleRepository.deleteById(id);
                 LOGGER.info("Role by id={} has deleted", id);
-                return true;
+            } else {
+                String message = MessageFormat.
+                        format("Role by id={0} cannot be deleted, it is used at another element of application", id);
+                LOGGER.error(message);
+                throw new ElementCanNotBeDeleted(message);
             }
-            LOGGER.info("Role by id={} cannot be deleted", id);
-            return false;
+        } else {
+            String message = MessageFormat.format("Role with id={0} not found", id);
+            LOGGER.error(message);
+            throw new NoSuchElementException(message);
         }
-        LOGGER.info("User by id={} does not exist", id);
-        return false;
     }
 
     @Override
     @Transactional
-    public RoleDto update(RoleDto dto) {
+    public RoleDto partialUpdate(RoleDto dto) {
         if (dto.getId() == null) {
-            LOGGER.info("Invalid id was entered");
-            throw new InvalidDtoException("Invalid id was entered");
+            LOGGER.error("Invalid id, id should not be null");
+            throw new InvalidDtoException("Invalid id, id should not be null");
         }
-        Optional<Role> optional = roleRepository.findById(dto.getId());
-        Role role = optional.orElseThrow();
+        Role role = roleRepository.findById(dto.getId()).orElseThrow();
         if (dto.getName() != null) {
             role.setName(dto.getName());
         }
         if (dto.getUserIdList() != null) {
-            List<User> userList = converter.convertToEntity(dto).getUsers();
+            Set<User> userList = converter.convertToEntity(dto).getUsers();
             role.setUsers(userList);
         }
         role = roleRepository.save(role);
@@ -97,21 +119,35 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public Long save(RoleDto dto) {
-        validate(dto);
-        Role entity = converter.convertToEntity(dto);
-        entity = roleRepository.save(entity);
-        LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
-        return entity.getId();
-
+    public RoleDto update(RoleDto dto) {
+        if (dto.getId() == null) {
+            LOGGER.info("Entity with id={0} not found.");
+            Long id = save(dto);
+            return findById(id);
+        }
+        validate(dto, validator);
+        Role role = converter.convertToEntity(dto);
+        Role entity = roleRepository.save(role);
+        return converter.convertToDto(entity);
     }
 
-    private void validate(RoleDto dto) {
-        Set<ConstraintViolation<RoleDto>> violations = validator.validate(dto);
-        if (!violations.isEmpty()) {
-            String message = MessageFormat.format("This dto {0} is invalid, check violations: {1}", dto, violations);
+    @Override
+    @Transactional
+    public Long save(RoleDto dto) {
+        validate(dto, validator);
+        Role entity = converter.convertToEntity(dto);
+        Long id = roleRepository.findTopByOrderByIdDesc().getId();
+        entity.setId(++id);
+
+        try {
+            entity = roleRepository.save(entity);
+        } catch (RuntimeException exception) {
+            String message = MessageFormat
+                    .format("The role already exists: {0}.", entity);
             LOGGER.error(message);
-            throw new InvalidDtoException(message);
+            throw new SuchElementAlreadyExistsException(message);
         }
+        LOGGER.info("The role id={} has been saved in the database", entity.getId());
+        return entity.getId();
     }
 }
