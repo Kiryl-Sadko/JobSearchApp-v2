@@ -1,8 +1,9 @@
 package com.epam.esm.entity;
 
-import javax.persistence.CascadeType;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,13 +13,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @javax.persistence.Entity
 @Table(name = "user")
-public class User implements Entity, Serializable {
+public class User implements Entity {
+
+    private static final long serialVersionUID = -3568753121879863954L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,15 +34,17 @@ public class User implements Entity, Serializable {
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
+    @Cascade(CascadeType.SAVE_UPDATE)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> roles;
+    private Set<Role> roles;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<JobApplication> jobApplications;
+    @OneToMany(mappedBy = "user")
+    @Cascade(CascadeType.SAVE_UPDATE)
+    private Set<JobApplication> jobApplications;
 
     public User() {
     }
@@ -50,7 +54,6 @@ public class User implements Entity, Serializable {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
                 '}';
     }
 
@@ -59,16 +62,12 @@ public class User implements Entity, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id)
-                && Objects.equals(name, user.name)
-                && Objects.equals(password, user.password)
-                && Objects.equals(roles, user.roles)
-                && Objects.equals(jobApplications, user.jobApplications);
+        return Objects.equals(id, user.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, password, roles, jobApplications);
+        return Objects.hash(id);
     }
 
     public Long getId() {
@@ -95,19 +94,27 @@ public class User implements Entity, Serializable {
         this.password = password;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 
-    public List<JobApplication> getJobApplications() {
+    public Set<JobApplication> getJobApplications() {
         return jobApplications;
     }
 
-    public void setJobApplications(List<JobApplication> jobApplications) {
+    public void setJobApplications(Set<JobApplication> jobApplications) {
         this.jobApplications = jobApplications;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
+    public void addJobApplication(JobApplication jobApplication) {
+        jobApplications.add(jobApplication);
     }
 }

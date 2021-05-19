@@ -1,4 +1,6 @@
 package com.epam.esm.entity;
 
-public interface Entity {
+import java.io.Serializable;
+
+public interface Entity extends Serializable {
 }

@@ -1,7 +1,10 @@
 package com.epam.esm.entity;
 
-import javax.persistence.CascadeType;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -10,15 +13,16 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @javax.persistence.Entity
 @Table(name = "vacancy")
-public class Vacancy implements Entity, Serializable {
+public class Vacancy implements Entity {
+
+    private static final long serialVersionUID = -2585319354824992287L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,15 +46,16 @@ public class Vacancy implements Entity, Serializable {
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Cascade(CascadeType.SAVE_UPDATE)
     @JoinTable(name = "vacancy_skill",
             joinColumns = @JoinColumn(name = "vacancy_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id")
     )
-    private List<Skill> skills;
+    private Set<Skill> skills;
 
     @OneToMany(mappedBy = "vacancy")
-    private List<JobApplication> jobApplications;
+    private Set<JobApplication> jobApplications;
 
     public Vacancy() {
     }
@@ -73,20 +78,12 @@ public class Vacancy implements Entity, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Vacancy vacancy = (Vacancy) o;
-        return isDeleted == vacancy.isDeleted
-                && Objects.equals(id, vacancy.id)
-                && Objects.equals(position, vacancy.position)
-                && Objects.equals(employer, vacancy.employer)
-                && Objects.equals(placementDate, vacancy.placementDate)
-                && Objects.equals(salary, vacancy.salary)
-                && Objects.equals(location, vacancy.location)
-                && Objects.equals(skills, vacancy.skills)
-                && Objects.equals(jobApplications, vacancy.jobApplications);
+        return Objects.equals(id, vacancy.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, position, employer, placementDate, salary, location, isDeleted, skills, jobApplications);
+        return Objects.hash(id);
     }
 
     public Long getId() {
@@ -145,19 +142,27 @@ public class Vacancy implements Entity, Serializable {
         isDeleted = deleted;
     }
 
-    public List<Skill> getSkills() {
+    public Set<Skill> getSkills() {
         return skills;
     }
 
-    public void setSkills(List<Skill> skills) {
+    public void setSkills(Set<Skill> skills) {
         this.skills = skills;
     }
 
-    public List<JobApplication> getJobApplications() {
+    public Set<JobApplication> getJobApplications() {
         return jobApplications;
     }
 
-    public void setJobApplications(List<JobApplication> jobApplications) {
+    public void setJobApplications(Set<JobApplication> jobApplications) {
         this.jobApplications = jobApplications;
+    }
+
+    public void addSkill(Skill skill) {
+        skills.add(skill);
+    }
+
+    public void addJobApplication(JobApplication jobApplication) {
+        jobApplications.add(jobApplication);
     }
 }
