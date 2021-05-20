@@ -2,5 +2,7 @@ package com.epam.esm.dto;
 
 import org.springframework.hateoas.RepresentationModel;
 
-public abstract class Dto<T extends RepresentationModel<T>> extends RepresentationModel<T> {
+import java.io.Serializable;
+
+public abstract class Dto<T extends RepresentationModel<T>> extends RepresentationModel<T> implements Serializable {
 }

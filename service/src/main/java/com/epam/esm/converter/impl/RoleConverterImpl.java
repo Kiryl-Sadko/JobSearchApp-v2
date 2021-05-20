@@ -10,7 +10,9 @@ import com.epam.esm.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class RoleConverterImpl implements RoleConverter {
@@ -28,21 +30,27 @@ public class RoleConverterImpl implements RoleConverter {
     @Override
     public Role convertToEntity(RoleDto dto) {
         List<Long> userIdList = dto.getUserIdList();
-        List<User> users = userRepository.findAllById(userIdList);
+        List<User> userList = userRepository.findAllById(userIdList);
+        Set<User> users = new HashSet<>(userList);
 
-        return entityBuilder.setId(dto.getId())
+        Role role = entityBuilder
+                .setId(dto.getId())
                 .setName(dto.getName())
                 .setUsers(users)
                 .build();
+
+        users.forEach(user -> user.addRole(role));
+        return role;
     }
 
     @Override
     public RoleDto convertToDto(Role dto) {
-        List<User> users = dto.getUsers();
+        Set<User> users = dto.getUsers();
         List<Long> userIdList = new ArrayList<>();
         users.forEach(user -> userIdList.add(user.getId()));
 
-        return dtoBuilder.setId(dto.getId())
+        return dtoBuilder
+                .setId(dto.getId())
                 .setName(dto.getName())
                 .setUserIdList(userIdList)
                 .build();

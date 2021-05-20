@@ -1,5 +1,8 @@
 package com.epam.esm.entity;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -7,21 +10,25 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @javax.persistence.Entity
 @Table(name = "skill")
-public class Skill implements Entity, Serializable {
+public class Skill implements Entity {
+
+    private static final long serialVersionUID = -936654161436082337L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "name")
     private String name;
+
     @ManyToMany(mappedBy = "skills", fetch = FetchType.EAGER)
-    private List<Vacancy> vacancies;
+    @Cascade(CascadeType.SAVE_UPDATE)
+    private Set<Vacancy> vacancies;
 
     public Skill() {
     }
@@ -39,14 +46,12 @@ public class Skill implements Entity, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Skill skill = (Skill) o;
-        return Objects.equals(id, skill.id)
-                && Objects.equals(name, skill.name)
-                && Objects.equals(vacancies, skill.vacancies);
+        return Objects.equals(id, skill.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, vacancies);
+        return Objects.hash(id);
     }
 
     public Long getId() {
@@ -65,11 +70,15 @@ public class Skill implements Entity, Serializable {
         this.name = name;
     }
 
-    public List<Vacancy> getVacancies() {
+    public Set<Vacancy> getVacancies() {
         return vacancies;
     }
 
-    public void setVacancies(List<Vacancy> vacancies) {
+    public void setVacancies(Set<Vacancy> vacancies) {
         this.vacancies = vacancies;
+    }
+
+    public void addVacancy(Vacancy vacancy) {
+        vacancies.add(vacancy);
     }
 }

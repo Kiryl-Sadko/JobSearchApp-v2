@@ -5,7 +5,7 @@ import com.epam.esm.entity.Skill;
 import com.epam.esm.entity.Vacancy;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 
 @Component
 public class SkillBuilderImpl implements SkillBuilder {
@@ -41,7 +41,7 @@ public class SkillBuilderImpl implements SkillBuilder {
     }
 
     @Override
-    public SkillBuilder setVacancies(List<Vacancy> vacancies) {
+    public SkillBuilder setVacancies(Set<Vacancy> vacancies) {
         skill.setVacancies(vacancies);
         return this;
     }

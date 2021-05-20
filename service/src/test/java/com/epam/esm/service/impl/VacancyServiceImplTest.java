@@ -1,12 +1,10 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.config.ServiceConfig;
-import com.epam.esm.dto.SkillDto;
 import com.epam.esm.dto.VacancyDto;
 import com.epam.esm.exception.InvalidDtoException;
 import com.epam.esm.service.SkillService;
 import com.epam.esm.service.VacancyService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,12 +45,10 @@ class VacancyServiceImplTest {
 
     @Test
     void shouldDeleteById() {
-        boolean isDeleted = vacancyService.deleteById(1L);
-        assertFalse(isDeleted);
-        isDeleted = vacancyService.deleteById(6L);
-        assertFalse(isDeleted);
-        isDeleted = vacancyService.deleteById(5L);
-        assertTrue(isDeleted);
+        List<VacancyDto> before = vacancyService.findAll();
+        vacancyService.deleteById(5L);
+        List<VacancyDto> after = vacancyService.findAll();
+        assertTrue(before.size() > after.size());
     }
 
     @Test
@@ -62,7 +58,7 @@ class VacancyServiceImplTest {
         vacancyDto.setId(1L);
         String position = "updated position";
         vacancyDto.setPosition(position);
-        VacancyDto updated = vacancyService.update(vacancyDto);
+        VacancyDto updated = vacancyService.partialUpdate(vacancyDto);
 
         assertNotEquals(before.getPosition(), updated.getPosition());
         assertEquals(position, vacancyDto.getPosition());
@@ -71,7 +67,7 @@ class VacancyServiceImplTest {
     @Test
     void shouldThrowInvalidIdException() {
         VacancyDto vacancyDto = new VacancyDto();
-        assertThrows(InvalidDtoException.class, () -> vacancyService.update(vacancyDto));
+        assertThrows(InvalidDtoException.class, () -> vacancyService.partialUpdate(vacancyDto));
     }
 
     @Test
@@ -90,24 +86,15 @@ class VacancyServiceImplTest {
     }
 
     @Test
-    void shouldThrowInvalidDtoException() {
-        VacancyDto dto = new VacancyDto();
-        dto.setPosition("Test");
-        assertThrows(InvalidDtoException.class, () -> vacancyService.save(dto));
-    }
-
-    @Test
     void findVacancyBySkill() {
-        List<SkillDto> emptyList = new ArrayList<>();
+        List<Long> emptyList = new ArrayList<>();
         PageRequest pageable = PageRequest.of(0, 10);
-        List<VacancyDto> vacancyBySkill = vacancyService.findVacancyBySkill(emptyList, pageable);
-        Assertions.assertEquals(0, vacancyBySkill.size());
+        assertThrows(IllegalArgumentException.class, () -> vacancyService.findAllBySkill(emptyList, pageable));
 
-        List<SkillDto> filledList = new ArrayList<>();
-        filledList.add(skillService.findById(1L));
-        filledList.add(skillService.findById(2L));
-
-        vacancyBySkill = vacancyService.findVacancyBySkill(filledList, pageable);
-        Assertions.assertEquals(3, vacancyBySkill.size());
+        List<Long> filledList = new ArrayList<>();
+        filledList.add(1L);
+        filledList.add(2L);
+        List<VacancyDto> vacancyBySkill = vacancyService.findAllBySkill(filledList, pageable);
+        assertEquals(3, vacancyBySkill.size());
     }
 }

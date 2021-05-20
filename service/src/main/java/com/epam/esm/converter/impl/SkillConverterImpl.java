@@ -10,7 +10,9 @@ import com.epam.esm.repository.VacancyRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class SkillConverterImpl implements SkillConverter {
@@ -28,23 +30,31 @@ public class SkillConverterImpl implements SkillConverter {
 
     @Override
     public Skill convertToEntity(SkillDto dto) {
+        Long id = dto.getId();
+        String name = dto.getName();
         List<Long> vacancyIdList = dto.getVacancyIdList();
-        List<Vacancy> vacancies = vacancyRepository.findAllById(vacancyIdList);
+        List<Vacancy> vacancyList = vacancyRepository.findAllById(vacancyIdList);
+        Set<Vacancy> vacancies = new HashSet<>(vacancyList);
 
-        return entityBuilder.setId(dto.getId())
-                .setName(dto.getName())
+        Skill skill = entityBuilder
+                .setId(id)
+                .setName(name)
                 .setVacancies(vacancies)
                 .build();
+
+        vacancies.forEach(vacancy -> vacancy.addSkill(skill));
+        return skill;
     }
 
     @Override
-    public SkillDto convertToDto(Skill entity) {
-        List<Vacancy> vacancies = entity.getVacancies();
+    public SkillDto convertToDto(Skill skill) {
+        Set<Vacancy> vacancies = skill.getVacancies();
         List<Long> vacancyIdList = new ArrayList<>();
         vacancies.forEach(vacancy -> vacancyIdList.add(vacancy.getId()));
 
-        return dtoBuilder.setId(entity.getId())
-                .setName(entity.getName())
+        return dtoBuilder
+                .setId(skill.getId())
+                .setName(skill.getName())
                 .setVacancyIdList(vacancyIdList)
                 .build();
     }

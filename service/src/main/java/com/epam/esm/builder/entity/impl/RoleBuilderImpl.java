@@ -5,7 +5,7 @@ import com.epam.esm.entity.Role;
 import com.epam.esm.entity.User;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Set;
 
 @Component
 public class RoleBuilderImpl implements RoleBuilder {
@@ -41,7 +41,7 @@ public class RoleBuilderImpl implements RoleBuilder {
     }
 
     @Override
-    public RoleBuilder setUsers(List<User> users) {
+    public RoleBuilder setUsers(Set<User> users) {
         role.setUsers(users);
         return this;
     }

@@ -4,8 +4,11 @@ import com.epam.esm.converter.SkillConverter;
 import com.epam.esm.dto.SkillDto;
 import com.epam.esm.entity.Skill;
 import com.epam.esm.entity.Vacancy;
+import com.epam.esm.exception.ElementCanNotBeDeletedException;
 import com.epam.esm.exception.InvalidDtoException;
+import com.epam.esm.exception.SuchElementAlreadyExistsException;
 import com.epam.esm.repository.SkillRepository;
+import com.epam.esm.repository.VacancyRepository;
 import com.epam.esm.service.SkillService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,13 +18,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.epam.esm.service.Utils.validate;
 
 @Service
 public class SkillServiceImpl implements SkillService {
@@ -29,12 +35,14 @@ public class SkillServiceImpl implements SkillService {
     private static final Logger LOGGER = LogManager.getLogger(SkillServiceImpl.class);
 
     private final SkillRepository skillRepository;
+    private final VacancyRepository vacancyRepository;
     private final SkillConverter converter;
     private final Validator validator;
 
     public SkillServiceImpl(SkillRepository skillRepository,
-                            SkillConverter converter, Validator validator) {
+                            VacancyRepository vacancyRepository, SkillConverter converter, Validator validator) {
         this.skillRepository = skillRepository;
+        this.vacancyRepository = vacancyRepository;
         this.converter = converter;
         this.validator = validator;
     }
@@ -52,59 +60,139 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     @Transactional
-    public SkillDto findById(Long id) {
-        Skill skill = skillRepository.findById(id).orElseThrow();
-        return converter.convertToDto(skill);
+    public List<SkillDto> findAll() {
+        List<Skill> all = skillRepository.findAll();
+        List<SkillDto> result = new ArrayList<>();
+        all.forEach(entity -> result.add(converter.convertToDto(entity)));
+        return result;
     }
 
     @Override
     @Transactional
-    public boolean deleteById(Long id) {
+    public SkillDto findById(Long id) {
+        Optional<Skill> optional = skillRepository.findById(id);
+        if (optional.isPresent()) {
+            Skill skill = optional.orElseThrow();
+            return converter.convertToDto(skill);
+        }
+        String message = "The entity not found";
+        LOGGER.error(message);
+        throw new NoSuchElementException(message);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
         Optional<Skill> optionalSkill = skillRepository.findById(id);
         if (optionalSkill.isPresent()) {
-            Skill skill = optionalSkill.get();
-            List<Vacancy> vacancies = skill.getVacancies();
+            Skill skill = optionalSkill.orElseThrow();
+            Set<Vacancy> vacancies = skill.getVacancies();
             if (CollectionUtils.isEmpty(vacancies)) {
                 skillRepository.deleteById(id);
                 LOGGER.info("Skill by id={} has deleted", id);
-                return true;
+            } else {
+                String message = MessageFormat.
+                        format("Skill by id={0} cannot be deleted, it is used at another element of application", id);
+                LOGGER.error(message);
+                throw new ElementCanNotBeDeletedException(message);
             }
-            LOGGER.info("Skill by id={} cannot be deleted", id);
-            return false;
+        } else {
+            String message = MessageFormat.format("Skill with id={0} not found", id);
+            LOGGER.error(message);
+            throw new NoSuchElementException(message);
         }
-        LOGGER.info("User by id={} does not exist", id);
-        return false;
+    }
+
+    @Override
+    @Transactional
+    public SkillDto partialUpdate(SkillDto dto) {
+        Long dtoId = dto.getId();
+        if (dtoId == null) {
+            LOGGER.error("Invalid id, id should not be null");
+            throw new InvalidDtoException("Invalid id, id should not be null");
+        }
+
+        Skill result = skillRepository.findById(dtoId).orElseThrow();
+        updateName(dto, result);
+        updateVacancyList(dto, result);
+
+        result = skillRepository.save(result);
+        return converter.convertToDto(result);
     }
 
     @Override
     @Transactional
     public SkillDto update(SkillDto dto) {
         if (dto.getId() == null) {
-            LOGGER.info("Invalid id was entered");
-            throw new InvalidDtoException("Invalid id was entered");
+            LOGGER.info("Entity with id={0} not found. The Skill will be created instead of updating");
+            Long id = this.save(dto);
+            return findById(id);
         }
-        Optional<Skill> optional = skillRepository.findById(dto.getId());
-        Skill skill = optional.orElseThrow();
-        if (dto.getName() != null) {
-            skill.setName(dto.getName());
-        }
-        if (dto.getVacancyIdList() != null) {
-            List<Vacancy> vacancies = converter.convertToEntity(dto).getVacancies();
-            skill.setVacancies(vacancies);
-        }
+        validate(dto, validator);
+        Skill skill = converter.convertToEntity(dto);
+        updateVacancyList(dto, skill);
         skill = skillRepository.save(skill);
         return converter.convertToDto(skill);
+    }
+
+    private void updateVacancyList(SkillDto dto, Skill skillResult) {
+        Long skillId = dto.getId();
+        List<Long> vacancyIdList = dto.getVacancyIdList();
+        if (!CollectionUtils.isEmpty(vacancyIdList)) {
+            List<Vacancy> vacancyList = vacancyRepository.findAllById(vacancyIdList);
+            Set<Vacancy> vacanciesFromUI = new HashSet<>(vacancyList);
+            Skill skillFromDB = skillRepository.findById(skillId).orElseThrow();
+            Set<Vacancy> vacanciesFromDB = skillFromDB.getVacancies();
+            //удаление Вакансий из списка базы данных, которе не перечислены пользователем
+            vacanciesFromDB.removeIf(dbVacancy -> {
+                if (vacanciesFromUI.stream().noneMatch(dbVacancy::equals)) {
+                    Set<Skill> dbSkills = dbVacancy.getSkills();
+                    dbSkills.removeIf(skill -> skill.getId().equals(skillId));
+                    return true;
+                }
+                return false;
+            });
+            //удаление Вакансий из списка пользователя, если такие уже записаны в базу
+            vacanciesFromUI.removeIf(uiVacancy ->
+                    vacanciesFromDB.stream().anyMatch(v -> uiVacancy.getId().equals(v.getId())));
+            //установить обновленный скилл на все новые вакансии
+            vacanciesFromUI.forEach(vacancy -> vacancy.addSkill(skillResult));
+
+            vacanciesFromDB.addAll(vacanciesFromUI);
+            skillResult.setVacancies(vacanciesFromDB);
+        }
     }
 
     @Override
     @Transactional
     public Long save(SkillDto dto) {
-        validate(dto);
-        Skill entity = converter.convertToEntity(dto);
-        entity = skillRepository.save(entity);
-        LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
-        return entity.getId();
+        validate(dto, validator);
+        Skill skill = converter.convertToEntity(dto);
+        checkDtoForExistence(skill);
+        try {
+            skill = skillRepository.save(skill);
+        } catch (RuntimeException exception) {
+            String message = MessageFormat
+                    .format("The skill with name = {0} already exists.", skill.getName());
+            LOGGER.error(message);
+            throw new SuchElementAlreadyExistsException(message);
+        }
+        LOGGER.info("The skill id={} has been saved in the database", skill.getId());
 
+        return skill.getId();
+    }
+
+    private void checkDtoForExistence(Skill skill) {
+        Long skillId = skill.getId();
+        if (skillId != null) {
+            Optional<Skill> optional = skillRepository.findById(skillId);
+            if (optional.isPresent()) {
+                String message = MessageFormat
+                        .format("The skill with id = {0} already exists.", skillId);
+                LOGGER.error(message);
+                throw new SuchElementAlreadyExistsException(message);
+            }
+        }
     }
 
     @Override
@@ -126,12 +214,16 @@ public class SkillServiceImpl implements SkillService {
         return converter.convertToDto(skill);
     }
 
-    private void validate(SkillDto dto) {
-        Set<ConstraintViolation<SkillDto>> violations = validator.validate(dto);
-        if (!violations.isEmpty()) {
-            String message = MessageFormat.format("This dto {0} is invalid, check violations: {1}", dto, violations);
+    private void updateName(SkillDto dto, Skill result) {
+        String dtoName = dto.getName();
+        Optional<Skill> optionalByName = skillRepository.findByName(dtoName);
+        if (dtoName != null && optionalByName.isEmpty()) {
+            result.setName(dto.getName());
+
+        } else if (optionalByName.isPresent() && !optionalByName.orElseThrow().equals(result)) {
+            String message = MessageFormat.format("Skill with name = {0} already exists", dtoName);
             LOGGER.error(message);
-            throw new InvalidDtoException(message);
+            throw new SuchElementAlreadyExistsException(message);
         }
     }
 }

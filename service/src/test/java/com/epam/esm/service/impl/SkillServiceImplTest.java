@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +30,7 @@ class SkillServiceImplTest {
     @Test
     void shouldFindAll() {
         List<SkillDto> all = skillService.findAll(PageRequest.of(0, 10));
-        assertEquals(3, all.size());
+        assertEquals(4, all.size());
     }
 
     @Test
@@ -40,10 +41,10 @@ class SkillServiceImplTest {
 
     @Test
     void shouldDeleteById() {
-        boolean isDeleted = skillService.deleteById(1L);
-        assertFalse(isDeleted);
-        isDeleted = skillService.deleteById(3L);
-        assertTrue(isDeleted);
+        List<SkillDto> before = skillService.findAll();
+        skillService.deleteById(4L);
+        List<SkillDto> after = skillService.findAll();
+        assertTrue(before.size() > after.size());
     }
 
     @Test
@@ -53,7 +54,7 @@ class SkillServiceImplTest {
         skillDto.setId(1L);
         String name = "updated name";
         skillDto.setName(name);
-        SkillDto updated = skillService.update(skillDto);
+        SkillDto updated = skillService.partialUpdate(skillDto);
 
         assertNotEquals(before.getName(), updated.getName());
         assertEquals(name, skillDto.getName());
@@ -62,24 +63,26 @@ class SkillServiceImplTest {
     @Test
     void shouldThrowInvalidIdException() {
         SkillDto skillDto = new SkillDto();
-        assertThrows(InvalidDtoException.class, () -> skillService.update(skillDto));
+        assertThrows(InvalidDtoException.class, () -> skillService.partialUpdate(skillDto));
     }
 
     @Test
     void shouldCreateNewSkill() {
+        List<Long> vacancyIdList = new ArrayList<>();
+        vacancyIdList.add(5L);
+        vacancyIdList.add(2L);
         SkillDto dto = new SkillDto();
-        dto.setId(5L);
         dto.setName("Test");
+        dto.setVacancyIdList(vacancyIdList);
         Long id = skillService.save(dto);
         SkillDto savedDto = skillService.findById(id);
         assertEquals(dto.getName(), savedDto.getName());
-        assertNotEquals(dto.getId(), savedDto.getId());
+        assertEquals(vacancyIdList.size(), savedDto.getVacancyIdList().size());
     }
 
     @Test
     void shouldThrowInvalidDtoException() {
         SkillDto dto = new SkillDto();
-        dto.setName("Test");
         assertThrows(InvalidDtoException.class, () -> skillService.save(dto));
     }
 

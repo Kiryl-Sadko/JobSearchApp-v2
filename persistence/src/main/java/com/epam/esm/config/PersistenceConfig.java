@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @SpringBootConfiguration
-@PropertySource("datasource.properties")
+@PropertySource("classpath:datasource.properties")
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "com.epam.esm.repository")
 public class PersistenceConfig {

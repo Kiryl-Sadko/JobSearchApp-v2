@@ -8,6 +8,7 @@ import com.epam.esm.entity.JobApplication;
 import com.epam.esm.entity.User;
 import com.epam.esm.entity.Vacancy;
 import com.epam.esm.exception.InvalidDtoException;
+import com.epam.esm.exception.SuchElementAlreadyExistsException;
 import com.epam.esm.repository.JobApplicationRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.repository.VacancyRepository;
@@ -20,14 +21,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.epam.esm.service.Utils.validate;
 
 @Service
 public class JobApplicationServiceImpl implements JobApplicationService {
@@ -70,30 +73,46 @@ public class JobApplicationServiceImpl implements JobApplicationService {
 
     @Override
     @Transactional
-    public JobApplicationDto findById(Long id) {
-        JobApplication jobApplication = jobApplicationRepository.findById(id).orElseThrow();
-        return converter.convertToDto(jobApplication);
+    public List<JobApplicationDto> findAll() {
+        List<JobApplication> all = jobApplicationRepository.findAll();
+        List<JobApplicationDto> result = new ArrayList<>();
+        all.forEach(entity -> result.add(converter.convertToDto(entity)));
+        return result;
     }
 
     @Override
     @Transactional
-    public boolean deleteById(Long id) {
+    public JobApplicationDto findById(Long id) {
+        Optional<JobApplication> optional = jobApplicationRepository.findById(id);
+        if (optional.isPresent()) {
+            JobApplication jobApplication = optional.orElseThrow();
+            return converter.convertToDto(jobApplication);
+        }
+        String message = "The entity not found";
+        LOGGER.error(message);
+        throw new NoSuchElementException(message);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
         Optional<JobApplication> optional = jobApplicationRepository.findById(id);
         if (optional.isPresent()) {
             jobApplicationRepository.deleteById(id);
             LOGGER.info("JobApplication by id={} has deleted", id);
-            return true;
+        } else {
+            String message = MessageFormat.format("JobApplication with id={0} not found", id);
+            LOGGER.error(message);
+            throw new NoSuchElementException(message);
         }
-        LOGGER.info("JobApplication by id={} does not exist", id);
-        return false;
     }
 
     @Override
     @Transactional
-    public JobApplicationDto update(JobApplicationDto dto) {
+    public JobApplicationDto partialUpdate(JobApplicationDto dto) {
         if (dto.getId() == null) {
-            LOGGER.info("Invalid id was entered");
-            throw new InvalidDtoException("Invalid id was entered");
+            LOGGER.error("Invalid id, id should not be null");
+            throw new InvalidDtoException("Invalid id, id should not be null");
         }
         Optional<JobApplication> optional = jobApplicationRepository.findById(dto.getId());
         JobApplication jobApplication = optional.orElseThrow();
@@ -114,12 +133,37 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     }
 
     @Override
+    @Transactional
+    public JobApplicationDto update(JobApplicationDto dto) {
+        if (dto.getId() == null) {
+            LOGGER.info("Entity with id={0} not found.");
+            Long id = save(dto);
+            return findById(id);
+        }
+        validate(dto, validator);
+        JobApplication jobApplication = converter.convertToEntity(dto);
+        JobApplication entity = jobApplicationRepository.save(jobApplication);
+        return converter.convertToDto(entity);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Long save(JobApplicationDto dto) {
-        validate(dto);
+        validate(dto, validator);
         JobApplication entity = converter.convertToEntity(dto);
-        entity = jobApplicationRepository.save(entity);
-        LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
+        Long id = jobApplicationRepository.findTopByOrderByIdDesc().getId();
+        entity.setId(++id);
+
+        try {
+            entity = jobApplicationRepository.save(entity);
+        } catch (RuntimeException exception) {
+            String message = MessageFormat
+                    .format("The jobApplication already exists: {0}.", entity);
+            LOGGER.error(message);
+            throw new SuchElementAlreadyExistsException(message);
+        }
+        LOGGER.info("The jobApplication id={} has been saved in the database", entity.getId());
+
         return entity.getId();
     }
 
@@ -134,11 +178,20 @@ public class JobApplicationServiceImpl implements JobApplicationService {
 
     @Override
     @Transactional
-    public JobApplicationDto create(Long userId, Long vacancyId) {
+    public JobApplicationDto save(Long userId, Long vacancyId) {
         User user = userRepository.findById(userId).orElseThrow();
         Vacancy vacancy = vacancyRepository.findById(vacancyId).orElseThrow();
-        LocalDateTime now = LocalDateTime.now();
 
+        Set<JobApplication> jobApplications = user.getJobApplications();
+        if (jobApplications.stream().anyMatch(jobApplication ->
+                jobApplication.getVacancy().equals(vacancy))) {
+
+            String message = MessageFormat.format("This user {0} has already applied for this vacancy {1}", user, vacancy);
+            LOGGER.error(message);
+            throw new SuchElementAlreadyExistsException(message);
+        }
+
+        LocalDateTime now = LocalDateTime.now();
         JobApplication jobApplication = new JobApplication();
         jobApplication.setUser(user);
         jobApplication.setVacancy(vacancy);
@@ -146,14 +199,5 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         jobApplication.setResponseDate(now);
         jobApplication = jobApplicationRepository.save(jobApplication);
         return converter.convertToDto(jobApplication);
-    }
-
-    private void validate(JobApplicationDto dto) {
-        Set<ConstraintViolation<JobApplicationDto>> violations = validator.validate(dto);
-        if (!violations.isEmpty()) {
-            String message = MessageFormat.format("This dto {0} is invalid, check violations: {1}", dto, violations);
-            LOGGER.error(message);
-            throw new InvalidDtoException(message);
-        }
     }
 }

@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.epam.esm.service.Utils.*;
 
@@ -38,15 +40,19 @@ public class VacancyConverterImpl implements VacancyConverter {
     @Override
     public Vacancy convertToEntity(VacancyDto dto) {
         List<Long> skillIdList = dto.getSkillIdList();
-        List<Skill> skills = skillRepository.findAllById(skillIdList);
+        List<Skill> skillList = skillRepository.findAllById(skillIdList);
+        Set<Skill> skills = new HashSet<>(skillList);
         List<Long> jobApplicationIdList = dto.getJobApplicationIdList();
-        List<JobApplication> jobApplications = jobApplicationRepository.findAllById(jobApplicationIdList);
+        List<JobApplication> jobApplicationList = jobApplicationRepository.findAllById(jobApplicationIdList);
+        Set<JobApplication> jobApplications = new HashSet<>(jobApplicationList);
 
         LocalDateTime localDateTime = null;
         if (dto.getPlacementDate() != null) {
             localDateTime = getCalendarFromString(dto.getPlacementDate());
         }
-        return entityBuilder.setId(dto.getId())
+
+        Vacancy vacancy = entityBuilder
+                .setId(dto.getId())
                 .setPosition(dto.getPosition())
                 .setEmployer(dto.getEmployer())
                 .setLocation(dto.getLocation())
@@ -55,19 +61,24 @@ public class VacancyConverterImpl implements VacancyConverter {
                 .setSkills(skills)
                 .setJobApplications(jobApplications)
                 .build();
+
+        skills.forEach(skill -> skill.addVacancy(vacancy));
+        jobApplications.forEach(jobApplication -> jobApplication.setVacancy(vacancy));
+        return vacancy;
     }
 
     @Override
     public VacancyDto convertToDto(Vacancy entity) {
-        List<Skill> skills = entity.getSkills();
+        Set<Skill> skills = entity.getSkills();
         List<Long> skillIdList = new ArrayList<>();
         skills.forEach(skill -> skillIdList.add(skill.getId()));
 
-        List<JobApplication> jobApplications = entity.getJobApplications();
+        Set<JobApplication> jobApplications = entity.getJobApplications();
         List<Long> jobApplicationIdList = new ArrayList<>();
         jobApplications.forEach(jobApplication -> jobApplicationIdList.add(jobApplication.getId()));
 
-        return dtoBuilder.setId(entity.getId())
+        return dtoBuilder
+                .setId(entity.getId())
                 .setPosition(entity.getPosition())
                 .setLocation(entity.getLocation())
                 .setEmployer(entity.getEmployer())

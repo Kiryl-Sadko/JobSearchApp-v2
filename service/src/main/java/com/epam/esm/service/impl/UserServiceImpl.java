@@ -5,7 +5,9 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.JobApplication;
 import com.epam.esm.entity.Role;
 import com.epam.esm.entity.User;
+import com.epam.esm.exception.ElementCanNotBeDeletedException;
 import com.epam.esm.exception.InvalidDtoException;
+import com.epam.esm.exception.SuchElementAlreadyExistsException;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.UserService;
 import org.apache.logging.log4j.LogManager;
@@ -16,13 +18,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.epam.esm.service.Utils.validate;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -52,36 +56,68 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto findById(Long id) {
-        User user = userRepository.findById(id).orElseThrow();
-        return converter.convertToDto(user);
+    public List<UserDto> findAll() {
+        List<User> all = userRepository.findAll();
+        List<UserDto> result = new ArrayList<>();
+        all.forEach(entity -> result.add(converter.convertToDto(entity)));
+        return result;
     }
 
     @Override
     @Transactional
-    public boolean deleteById(Long id) {
+    public UserDto findById(Long id) {
+        Optional<User> optional = userRepository.findById(id);
+        if (optional.isPresent()) {
+            User user = optional.orElseThrow();
+            return converter.convertToDto(user);
+        }
+        String message = "The entity not found";
+        LOGGER.error(message);
+        throw new NoSuchElementException(message);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            List<JobApplication> jobApplications = user.getJobApplications();
+            User user = optionalUser.orElseThrow();
+            Set<JobApplication> jobApplications = user.getJobApplications();
             if (CollectionUtils.isEmpty(jobApplications)) {
                 userRepository.deleteById(id);
                 LOGGER.info("User by id={} has deleted", id);
-                return true;
+            } else {
+                String message = MessageFormat.
+                        format("User by id={0} cannot be deleted, it is used at another element of application", id);
+                LOGGER.error(message);
+                throw new ElementCanNotBeDeletedException(message);
             }
-            LOGGER.info("User by id={} cannot be deleted", id);
-            return false;
+        } else {
+            String message = MessageFormat.format("User with id={0} not found", id);
+            LOGGER.error(message);
+            throw new ElementCanNotBeDeletedException(message);
         }
-        LOGGER.info("User by id={} does not exist", id);
-        return false;
+    }
+
+    @Override
+    public UserDto update(UserDto dto) {
+        if (dto.getId() == null) {
+            LOGGER.info("Entity with id={0} not found.");
+            Long id = save(dto);
+            return findById(id);
+        }
+        validate(dto, validator);
+        User user = converter.convertToEntity(dto);
+        User entity = userRepository.save(user);
+        return converter.convertToDto(entity);
     }
 
     @Override
     @Transactional
-    public UserDto update(UserDto dto) {
+    public UserDto partialUpdate(UserDto dto) {
         if (dto.getId() == null) {
-            LOGGER.info("Invalid id was entered");
-            throw new InvalidDtoException("Invalid id was entered");
+            LOGGER.info("Invalid id, id should not be null");
+            throw new InvalidDtoException("Invalid id, id should not be null");
         }
         Optional<User> optional = userRepository.findById(dto.getId());
         User user = optional.orElseThrow();
@@ -92,11 +128,11 @@ public class UserServiceImpl implements UserService {
             user.setPassword(dto.getPassword());
         }
         if (dto.getRoleIdList() != null) {
-            List<Role> roles = converter.convertToEntity(dto).getRoles();
+            Set<Role> roles = converter.convertToEntity(dto).getRoles();
             user.setRoles(roles);
         }
         if (dto.getJobApplicationIdList() != null) {
-            List<JobApplication> jobApplications = converter.convertToEntity(dto).getJobApplications();
+            Set<JobApplication> jobApplications = converter.convertToEntity(dto).getJobApplications();
             user.setJobApplications(jobApplications);
         }
         user = userRepository.save(user);
@@ -106,19 +142,19 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Long save(UserDto dto) {
-        validate(dto);
+        validate(dto, validator);
         User entity = converter.convertToEntity(dto);
-        entity = userRepository.save(entity);
-        LOGGER.info("The DTO id={} has been saved in the database", entity.getId());
-        return entity.getId();
-    }
-
-    private void validate(UserDto dto) {
-        Set<ConstraintViolation<UserDto>> violations = validator.validate(dto);
-        if (!violations.isEmpty()) {
-            String message = MessageFormat.format("This dto {0} is invalid, check violations: {1}", dto, violations);
+        Long id = userRepository.findTopByOrderByIdDesc().getId();
+        entity.setId(++id);
+        try {
+            entity = userRepository.save(entity);
+        } catch (RuntimeException exception) {
+            String message = MessageFormat
+                    .format("The user already exists: {0}.", entity);
             LOGGER.error(message);
-            throw new InvalidDtoException(message);
+            throw new SuchElementAlreadyExistsException(message);
         }
+        LOGGER.info("The user id={} has been saved in the database", entity.getId());
+        return entity.getId();
     }
 }

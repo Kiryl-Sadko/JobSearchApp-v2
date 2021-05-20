@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Component
 public class VacancyBuilderImpl implements VacancyBuilder {
@@ -74,13 +74,13 @@ public class VacancyBuilderImpl implements VacancyBuilder {
     }
 
     @Override
-    public VacancyBuilder setSkills(List<Skill> skills) {
+    public VacancyBuilder setSkills(Set<Skill> skills) {
         vacancy.setSkills(skills);
         return this;
     }
 
     @Override
-    public VacancyBuilder setJobApplications(List<JobApplication> jobApplications) {
+    public VacancyBuilder setJobApplications(Set<JobApplication> jobApplications) {
         vacancy.setJobApplications(jobApplications);
         return this;
     }

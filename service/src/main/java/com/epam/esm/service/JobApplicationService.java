@@ -9,5 +9,5 @@ public interface JobApplicationService extends CRUDService<JobApplicationDto> {
 
     List<JobApplicationDto> findByUserId(Long userId, Pageable pageable);
 
-    JobApplicationDto create(Long userId, Long vacancyId);
+    JobApplicationDto save(Long userId, Long vacancyId);
 }
