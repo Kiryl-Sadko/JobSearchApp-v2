@@ -80,7 +80,7 @@ public class VacancyServiceImpl implements VacancyService {
     public VacancyDto findById(Long id) {
         Optional<Vacancy> optional = vacancyRepository.findById(id);
         if (optional.isPresent()) {
-            Vacancy vacancy = optional.get();
+            Vacancy vacancy = optional.orElseThrow();
             return vacancyConverter.convertToDto(vacancy);
         }
         String message = "The entity not found";
@@ -93,7 +93,7 @@ public class VacancyServiceImpl implements VacancyService {
     public void deleteById(Long id) {
         Optional<Vacancy> optionalVacancy = vacancyRepository.findById(id);
         if (optionalVacancy.isPresent()) {
-            Vacancy vacancy = optionalVacancy.get();
+            Vacancy vacancy = optionalVacancy.orElseThrow();
             Set<JobApplication> jobApplications = vacancy.getJobApplications();
             if (CollectionUtils.isEmpty(jobApplications)) {
                 vacancyRepository.deleteById(id);

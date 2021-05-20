@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
     public UserDto findById(Long id) {
         Optional<User> optional = userRepository.findById(id);
         if (optional.isPresent()) {
-            User user = optional.get();
+            User user = optional.orElseThrow();
             return converter.convertToDto(user);
         }
         String message = "The entity not found";
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
     public void deleteById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+            User user = optionalUser.orElseThrow();
             Set<JobApplication> jobApplications = user.getJobApplications();
             if (CollectionUtils.isEmpty(jobApplications)) {
                 userRepository.deleteById(id);

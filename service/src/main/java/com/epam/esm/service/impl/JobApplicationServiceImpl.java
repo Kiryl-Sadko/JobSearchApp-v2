@@ -85,7 +85,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     public JobApplicationDto findById(Long id) {
         Optional<JobApplication> optional = jobApplicationRepository.findById(id);
         if (optional.isPresent()) {
-            JobApplication jobApplication = optional.get();
+            JobApplication jobApplication = optional.orElseThrow();
             return converter.convertToDto(jobApplication);
         }
         String message = "The entity not found";

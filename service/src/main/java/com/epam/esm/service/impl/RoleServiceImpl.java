@@ -67,7 +67,7 @@ public class RoleServiceImpl implements RoleService {
     public RoleDto findById(Long id) {
         Optional<Role> optional = roleRepository.findById(id);
         if (optional.isPresent()) {
-            Role role = optional.get();
+            Role role = optional.orElseThrow();
             return converter.convertToDto(role);
         }
         String message = "The entity not found";
@@ -80,7 +80,7 @@ public class RoleServiceImpl implements RoleService {
     public void deleteById(Long id) {
         Optional<Role> optionalRole = roleRepository.findById(id);
         if (optionalRole.isPresent()) {
-            Role role = optionalRole.get();
+            Role role = optionalRole.orElseThrow();
             Set<User> users = role.getUsers();
             if (CollectionUtils.isEmpty(users)) {
                 roleRepository.deleteById(id);

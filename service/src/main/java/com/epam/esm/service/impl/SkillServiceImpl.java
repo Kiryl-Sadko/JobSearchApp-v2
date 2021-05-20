@@ -72,7 +72,7 @@ public class SkillServiceImpl implements SkillService {
     public SkillDto findById(Long id) {
         Optional<Skill> optional = skillRepository.findById(id);
         if (optional.isPresent()) {
-            Skill skill = optional.get();
+            Skill skill = optional.orElseThrow();
             return converter.convertToDto(skill);
         }
         String message = "The entity not found";
@@ -85,7 +85,7 @@ public class SkillServiceImpl implements SkillService {
     public void deleteById(Long id) {
         Optional<Skill> optionalSkill = skillRepository.findById(id);
         if (optionalSkill.isPresent()) {
-            Skill skill = optionalSkill.get();
+            Skill skill = optionalSkill.orElseThrow();
             Set<Vacancy> vacancies = skill.getVacancies();
             if (CollectionUtils.isEmpty(vacancies)) {
                 skillRepository.deleteById(id);
@@ -220,7 +220,7 @@ public class SkillServiceImpl implements SkillService {
         if (dtoName != null && optionalByName.isEmpty()) {
             result.setName(dto.getName());
 
-        } else if (optionalByName.isPresent() && !optionalByName.get().equals(result)) {
+        } else if (optionalByName.isPresent() && !optionalByName.orElseThrow().equals(result)) {
             String message = MessageFormat.format("Skill with name = {0} already exists", dtoName);
             LOGGER.error(message);
             throw new SuchElementAlreadyExistsException(message);
