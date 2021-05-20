@@ -5,7 +5,7 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.JobApplication;
 import com.epam.esm.entity.Role;
 import com.epam.esm.entity.User;
-import com.epam.esm.exception.ElementCanNotBeDeleted;
+import com.epam.esm.exception.ElementCanNotBeDeletedException;
 import com.epam.esm.exception.InvalidDtoException;
 import com.epam.esm.exception.SuchElementAlreadyExistsException;
 import com.epam.esm.repository.UserRepository;
@@ -90,12 +90,12 @@ public class UserServiceImpl implements UserService {
                 String message = MessageFormat.
                         format("User by id={0} cannot be deleted, it is used at another element of application", id);
                 LOGGER.error(message);
-                throw new ElementCanNotBeDeleted(message);
+                throw new ElementCanNotBeDeletedException(message);
             }
         } else {
             String message = MessageFormat.format("User with id={0} not found", id);
             LOGGER.error(message);
-            throw new ElementCanNotBeDeleted(message);
+            throw new ElementCanNotBeDeletedException(message);
         }
     }
 

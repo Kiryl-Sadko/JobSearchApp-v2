@@ -4,7 +4,7 @@ import com.epam.esm.converter.SkillConverter;
 import com.epam.esm.dto.SkillDto;
 import com.epam.esm.entity.Skill;
 import com.epam.esm.entity.Vacancy;
-import com.epam.esm.exception.ElementCanNotBeDeleted;
+import com.epam.esm.exception.ElementCanNotBeDeletedException;
 import com.epam.esm.exception.InvalidDtoException;
 import com.epam.esm.exception.SuchElementAlreadyExistsException;
 import com.epam.esm.repository.SkillRepository;
@@ -94,7 +94,7 @@ public class SkillServiceImpl implements SkillService {
                 String message = MessageFormat.
                         format("Skill by id={0} cannot be deleted, it is used at another element of application", id);
                 LOGGER.error(message);
-                throw new ElementCanNotBeDeleted(message);
+                throw new ElementCanNotBeDeletedException(message);
             }
         } else {
             String message = MessageFormat.format("Skill with id={0} not found", id);

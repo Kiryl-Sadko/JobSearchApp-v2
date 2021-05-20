@@ -49,8 +49,8 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, METHOD_NOT_ALLOWED);
     }
 
-    @ExceptionHandler(ElementCanNotBeDeleted.class)
-    protected ResponseEntity<CustomExceptionResponse> handleUpdatingElementException(ElementCanNotBeDeleted exception) {
+    @ExceptionHandler(ElementCanNotBeDeletedException.class)
+    protected ResponseEntity<CustomExceptionResponse> handleUpdatingElementException(ElementCanNotBeDeletedException exception) {
         CustomExceptionResponse exceptionResponse = new CustomExceptionResponse();
         exceptionResponse.setErrorStatus(METHOD_NOT_ALLOWED);
         exceptionResponse.setErrorMessage(exception.getMessage());
