@@ -89,6 +89,7 @@ project(":web") {
         implementation group: 'org.springframework.hateoas', name: 'spring-hateoas'
 
         implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-security'
 
         implementation group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'
         
