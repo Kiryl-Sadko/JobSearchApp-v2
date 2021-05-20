@@ -50,7 +50,9 @@ public class JobApplicationRepositoryTest {
         repository.save(jobApplication);
 
         List<JobApplication> after = repository.findAll();
-        assertTrue(before.size() < after.size());
+        int beforeSize = before.size();
+        int afterSize = after.size();
+        assertEquals(afterSize, ++beforeSize);
     }
 
     @Test

@@ -93,6 +93,6 @@ class UserRepositoryTest {
         int initialSize = userRepository.findAll().size();
         userRepository.deleteById(3L);
         int finalSize = userRepository.findAll().size();
-        assertTrue(finalSize < initialSize);
+        assertEquals(initialSize, ++finalSize);
     }
 }
