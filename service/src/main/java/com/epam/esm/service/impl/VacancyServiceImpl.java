@@ -1,6 +1,5 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.converter.SkillConverter;
 import com.epam.esm.converter.VacancyConverter;
 import com.epam.esm.dto.VacancyDto;
 import com.epam.esm.entity.JobApplication;
@@ -45,16 +44,15 @@ public class VacancyServiceImpl implements VacancyService {
     private final SkillRepository skillRepository;
     private final JobApplicationRepository jobApplicationRepository;
     private final VacancyConverter vacancyConverter;
-    private final SkillConverter skillConverter;
     private final Validator validator;
 
     public VacancyServiceImpl(VacancyRepository vacancyRepository,
-                              SkillRepository skillRepository, JobApplicationRepository jobApplicationRepository, VacancyConverter vacancyConverter, SkillConverter skillConverter, Validator validator) {
+                              SkillRepository skillRepository, JobApplicationRepository jobApplicationRepository,
+                              VacancyConverter vacancyConverter, Validator validator) {
         this.vacancyRepository = vacancyRepository;
         this.skillRepository = skillRepository;
         this.jobApplicationRepository = jobApplicationRepository;
         this.vacancyConverter = vacancyConverter;
-        this.skillConverter = skillConverter;
         this.validator = validator;
     }
 
@@ -162,7 +160,7 @@ public class VacancyServiceImpl implements VacancyService {
     private void updateJobApplicationList(VacancyDto dto) {
         Vacancy vacancy = vacancyConverter.convertToEntity(dto);
         List<Long> jobApplicationIdList = dto.getJobApplicationIdList();
-        if (!jobApplicationIdList.isEmpty()) {
+        if (!CollectionUtils.isEmpty(jobApplicationIdList)) {
             List<JobApplication> jobApplicationList = jobApplicationRepository.findAllById(jobApplicationIdList);
             jobApplicationList.forEach(jobApplication -> jobApplication.setVacancy(vacancy));
             List<JobApplication> listFromDB = jobApplicationRepository.findByVacancyId(dto.getId());
@@ -180,7 +178,7 @@ public class VacancyServiceImpl implements VacancyService {
     private void updateSkillList(VacancyDto dto, Vacancy vacancyResult) {
         Long vacancyId = dto.getId();
         List<Long> skillIdList = dto.getSkillIdList();
-        if (!skillIdList.isEmpty()) {
+        if (!CollectionUtils.isEmpty(skillIdList)) {
             List<Skill> skillList = skillRepository.findAllById(skillIdList);
             Set<Skill> skillsFromUI = new HashSet<>(skillList);
             Vacancy vacancyFromDB = vacancyRepository.findById(vacancyId).orElseThrow();
@@ -241,7 +239,7 @@ public class VacancyServiceImpl implements VacancyService {
     @Override
     @Transactional
     public List<VacancyDto> findAllBySkill(List<Long> skillIdList, Pageable pageable) {
-        if (skillIdList == null || skillIdList.isEmpty()) {
+        if (skillIdList == null || CollectionUtils.isEmpty(skillIdList)) {
             throw new IllegalArgumentException();
         }
         List<Skill> skills = new ArrayList<>();

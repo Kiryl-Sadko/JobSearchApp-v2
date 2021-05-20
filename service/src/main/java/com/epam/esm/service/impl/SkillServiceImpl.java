@@ -138,7 +138,7 @@ public class SkillServiceImpl implements SkillService {
     private void updateVacancyList(SkillDto dto, Skill skillResult) {
         Long skillId = dto.getId();
         List<Long> vacancyIdList = dto.getVacancyIdList();
-        if (!vacancyIdList.isEmpty()) {
+        if (!CollectionUtils.isEmpty(vacancyIdList)) {
             List<Vacancy> vacancyList = vacancyRepository.findAllById(vacancyIdList);
             Set<Vacancy> vacanciesFromUI = new HashSet<>(vacancyList);
             Skill skillFromDB = skillRepository.findById(skillId).orElseThrow();

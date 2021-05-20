@@ -5,6 +5,7 @@ import com.epam.esm.exception.InvalidDtoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -34,7 +35,7 @@ public final class Utils {
 
     public static void validate(Dto dto, Validator validator) {
         Set<ConstraintViolation<Dto>> violations = validator.validate(dto);
-        if (!violations.isEmpty()) {
+        if (!CollectionUtils.isEmpty(violations)) {
             StringBuilder causes = new StringBuilder();
             violations.stream().iterator().forEachRemaining(violation -> causes
                     .append("'")
