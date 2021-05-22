@@ -100,6 +100,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto update(UserDto dto) {
         if (dto.getId() == null) {
             LOGGER.info("Entity with id={0} not found.");
