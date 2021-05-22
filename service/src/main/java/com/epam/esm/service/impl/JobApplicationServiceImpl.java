@@ -170,7 +170,7 @@ public class JobApplicationServiceImpl implements JobApplicationService {
     @Override
     @Transactional
     public List<JobApplicationDto> findByUserId(Long userId, Pageable pageable) {
-        List<JobApplication> jobApplications = jobApplicationRepository.findByUserId(userId, pageable).getContent();
+        List<JobApplication> jobApplications = jobApplicationRepository.findByUserId(userId);
         List<JobApplicationDto> result = new ArrayList<>();
         jobApplications.forEach(entity -> result.add(converter.convertToDto(entity)));
         return result;
