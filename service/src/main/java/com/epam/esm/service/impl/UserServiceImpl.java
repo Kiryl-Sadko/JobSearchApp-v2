@@ -42,7 +42,8 @@ public class UserServiceImpl implements UserService {
     private final UserConverter converter;
     private final Validator validator;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, JobApplicationRepository jobApplicationRepository, UserConverter converter, Validator validator) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
+                           JobApplicationRepository jobApplicationRepository, UserConverter converter, Validator validator) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.jobApplicationRepository = jobApplicationRepository;
