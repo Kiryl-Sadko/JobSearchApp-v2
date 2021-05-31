@@ -69,8 +69,7 @@ public class JobApplicationRepositoryTest {
 
     @Test
     public void shouldFindJobApplicationsByUserId() {
-        Page<JobApplication> byUserId = repository.findByUserId(1L, PageRequest.of(0, 5));
-        List<JobApplication> applicationList = byUserId.getContent();
+        List<JobApplication> applicationList = repository.findByUserId(1L);
         assertEquals(4, applicationList.size());
     }
 
