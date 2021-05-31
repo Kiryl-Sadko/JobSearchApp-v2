@@ -8,6 +8,8 @@ import com.epam.esm.entity.User;
 import com.epam.esm.exception.ElementCanNotBeDeletedException;
 import com.epam.esm.exception.InvalidDtoException;
 import com.epam.esm.exception.SuchElementAlreadyExistsException;
+import com.epam.esm.repository.JobApplicationRepository;
+import com.epam.esm.repository.RoleRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.UserService;
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +23,7 @@ import org.springframework.util.CollectionUtils;
 import javax.validation.Validator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -34,11 +37,16 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final JobApplicationRepository jobApplicationRepository;
     private final UserConverter converter;
     private final Validator validator;
 
-    public UserServiceImpl(UserRepository userRepository, UserConverter converter, Validator validator) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
+                           JobApplicationRepository jobApplicationRepository, UserConverter converter, Validator validator) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.jobApplicationRepository = jobApplicationRepository;
         this.converter = converter;
         this.validator = validator;
     }
@@ -100,6 +108,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto update(UserDto dto) {
         if (dto.getId() == null) {
             LOGGER.info("Entity with id={0} not found.");
@@ -119,24 +128,63 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("Invalid id, id should not be null");
             throw new InvalidDtoException("Invalid id, id should not be null");
         }
-        Optional<User> optional = userRepository.findById(dto.getId());
-        User user = optional.orElseThrow();
+        User user = userRepository.findById(dto.getId()).orElseThrow();
         if (dto.getName() != null) {
             user.setName(dto.getName());
         }
         if (dto.getPassword() != null) {
             user.setPassword(dto.getPassword());
         }
-        if (dto.getRoleIdList() != null) {
-            Set<Role> roles = converter.convertToEntity(dto).getRoles();
-            user.setRoles(roles);
-        }
-        if (dto.getJobApplicationIdList() != null) {
-            Set<JobApplication> jobApplications = converter.convertToEntity(dto).getJobApplications();
-            user.setJobApplications(jobApplications);
-        }
+        updateRoleList(dto, user);
+        updateJobApplicationList(dto);
         user = userRepository.save(user);
         return converter.convertToDto(user);
+    }
+
+    private void updateRoleList(UserDto dto, User userResult) {
+        Long userId = dto.getId();
+        List<Long> roleIdList = dto.getRoleIdList();
+        if (!CollectionUtils.isEmpty(roleIdList)) {
+            List<Role> roleList = roleRepository.findAllById(roleIdList);
+            Set<Role> roleFromUI = new HashSet<>(roleList);
+            User userFromDB = userRepository.findById(userId).orElseThrow();
+            Set<Role> rolesFromDB = userFromDB.getRoles();
+
+            rolesFromDB.removeIf(dbRole -> {
+                if (roleFromUI.stream().noneMatch(dbRole::equals)) {
+                    Set<User> dbUser = dbRole.getUsers();
+                    dbUser.removeIf(user -> user.getId().equals(userId));
+                    return true;
+                }
+                return false;
+            });
+
+            roleFromUI.removeIf(uiRole ->
+                    rolesFromDB.stream().anyMatch(role -> role.equals(uiRole)));
+
+            roleFromUI.forEach(role -> role.addUser(userResult));
+
+            rolesFromDB.addAll(roleFromUI);
+            userResult.setRoles(rolesFromDB);
+        }
+    }
+
+    private void updateJobApplicationList(UserDto dto) {
+        User user = converter.convertToEntity(dto);
+        List<Long> jobApplicationIdList = dto.getJobApplicationIdList();
+        if (!CollectionUtils.isEmpty(jobApplicationIdList)) {
+            List<JobApplication> jobApplicationList = jobApplicationRepository.findAllById(jobApplicationIdList);
+            jobApplicationList.forEach(jobApplication -> jobApplication.setUser(user));
+            List<JobApplication> listFromDB = jobApplicationRepository.findByUserId(dto.getId());
+
+            listFromDB.forEach(jobApplication -> {
+                if (!jobApplicationList.contains(jobApplication)) {
+                    Long id = jobApplication.getId();
+                    jobApplicationRepository.deleteById(id);
+                    LOGGER.info("Job application with id = {} has been deleted", id);
+                }
+            });
+        }
     }
 
     @Override

@@ -15,7 +15,7 @@ public class UserDto extends Dto<UserDto> {
     @Size(min = 4, max = 30)
     private String name;
     @NotNull
-    @Size(min = 4, max = 30)
+    @Size(min = 4)
     private String password;
     private List<Long> roleIdList = new ArrayList<>();
     private List<Long> applicationIdList = new ArrayList<>();
